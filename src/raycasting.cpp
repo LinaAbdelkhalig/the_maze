@@ -93,7 +93,16 @@ void renderWalls(SDL_Renderer *gRenderer, int SCREEN_WIDTH, int SCREEN_HEIGHT, i
         SDL_RenderFillRect(gRenderer, &ground);
 
         // Color the walls
-        SDL_SetRenderDrawColor(gRenderer, 77, 77, 77, 1);
+        // SDL_SetRenderDrawColor(gRenderer, 112, 112, 112, 255);
+        // SDL_RenderDrawLine(gRenderer, x, drawStart, x, drawEnd);
+        if(side) // East or West facing walls
+        {
+            SDL_SetRenderDrawColor(gRenderer, 112, 112, 112, 255); // Red color for East/West
+        }
+        else // North or South facing walls
+        {
+            SDL_SetRenderDrawColor(gRenderer, 90, 90, 90, 255); // Blue color for North/South
+        }
         SDL_RenderDrawLine(gRenderer, x, drawStart, x, drawEnd);
     }
 }
