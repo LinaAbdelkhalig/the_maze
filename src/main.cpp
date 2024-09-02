@@ -25,12 +25,77 @@ const float rotSpeed = M_PI / 4;
 const float camSpeed = 0.1f;
 
 /**
+ * checkCollision - checks for collision with walls.
+ *
+ * @x: The x-coordinate of the player position.
+ * @y: The y-coordinate of the camera position.
+ *
+ * Return: True if there is collision with walls, false if not.
+ */
+bool checkCollision(float x, float y)
+{
+    int mapX = (int)x;
+    int mapY = (int)y;
+
+    // In case it hits the map boundries
+    if (mapX < 0 || mapX >= 8 || mapY < 0 || mapY >= 8)
+        return true;
+
+    // True if there is a wall collision, False if no wall
+    return wMap[mapX][mapY] > 0;
+}
+
+/**
+ * playerMove - Handles the player movements and collision.
+ *
+ * @diffX: The change in x-coordinate of the player.
+ * @diffY: The change in y-coordinate of the player.
+ */
+void playerMove(float diffX, float diffY)
+{
+    // The next move coordinates
+    float nextX = camX + diffX;
+    float nextY = camY + diffY;
+
+    // Check collision
+    if (!checkCollision(nextX, nextY))
+    {
+        camX = nextX;
+        camY = nextY;
+    }
+    else
+    {
+        // Slide along the walls (horizontal movement)
+        // Sliding coordinates
+        float slideX = diffX;
+        float slideY = 0.0f;
+        if (checkCollision(camX + slideX, camY + slideY))
+        {
+            camX += slideX;
+            camY += slideY;
+        }
+        // Slide along the walls (vertical movement)
+        else
+        {
+            // Sliding coordinates
+            slideX = 0.0f;
+            slideY = diffY;
+            if (checkCollision(camX + slideX, camY + slideY))
+            {
+                camX += slideX;
+                camY += slideY;
+            }
+        }
+    }
+}
+
+/**
  * close - Close and free SDL resources
  *
  * @gWindow: Pointer to the SDL_Window to be destroyed.
  * @gRenderer: Pointer to the SDL_Renderer to be destroyted.
  */
-void close(SDL_Window *gWindow, SDL_Renderer *gRenderer)
+void close(SDL_Window* gWindow, SDL_Renderer* gRenderer)
 {
     SDL_DestroyRenderer(gRenderer);
     gRenderer = NULL;
@@ -49,18 +114,18 @@ void close(SDL_Window *gWindow, SDL_Renderer *gRenderer)
  *
  * Return: Exit status, 0 for success, 1 for failure.
  */
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     // Initialize SDL
-    if(SDL_Init(SDL_INIT_VIDEO) < 0)
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         printf("Could not initialize SDL. Error:%s\n", SDL_GetError());
         return 1;
     }
 
     // Create Window
-    SDL_Window *gWindow = SDL_CreateWindow("The Maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    if(!gWindow)
+    SDL_Window* gWindow = SDL_CreateWindow("The Maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    if (!gWindow)
     {
         printf("Could not create window. Error:%s\n", SDL_GetError());
         SDL_Quit();
@@ -68,8 +133,8 @@ int main(int argc, char *argv[])
     }
 
     // Render. -1 the first rendering driver that supports the flags
-    SDL_Renderer *gRenderer = SDL_CreateRenderer(gWindow, -1, 0);
-    if(!gRenderer)
+    SDL_Renderer* gRenderer = SDL_CreateRenderer(gWindow, -1, 0);
+    if (!gRenderer)
     {
         printf("Could not create rendering context. Error:%s\n", SDL_GetError());
         // Destroy and quit the created window due to the rendering failure.
@@ -85,53 +150,60 @@ int main(int argc, char *argv[])
     bool running = true;
     SDL_Event e;
 
-    while(running)
+    while (running)
     {
         while (SDL_PollEvent(&e) != 0)
         {
-            if(e.type == SDL_QUIT)
+            if (e.type == SDL_QUIT)
             {
                 running = false;
             }
             // User presses a key
             else if (e.type == SDL_KEYDOWN)
             {
+                // Player's next move coordinates
+                float moveX = 0.0f, moveY = 0.0f;
+
                 // Adjust the camera angle left or right based on keyboard
                 switch (e.key.keysym.sym)
                 {
-                    case SDLK_LEFT:
-                        camAngle -= rotSpeed;
-                        break;
-                    case SDLK_RIGHT:
-                        camAngle += rotSpeed;
-                        break;
-                    case SDLK_w:
-                        camX += cos(camAngle) * camSpeed;
-                        camY += sin(camAngle) * camSpeed;
-                        break;
-                    case SDLK_s:
-                        camX -= cos(camAngle) * camSpeed;
-                        camY -= sin(camAngle) * camSpeed;
-                        break;
-                    case SDLK_a:
-                        camX += sin(camAngle) * camSpeed;
-                        camY -= cos(camAngle) * camSpeed;
-                        break;
-                    case SDLK_d:
-                        camX -= sin(camAngle) * camSpeed;
-                        camY += cos(camAngle) * camSpeed;
-                        break;
-                    default:
-                        break;
+                case SDLK_LEFT:
+                    camAngle -= rotSpeed;
+                    break;
+                case SDLK_RIGHT:
+                    camAngle += rotSpeed;
+                    break;
+                case SDLK_w:
+                    moveX = cos(camAngle) * camSpeed;
+                    moveY = sin(camAngle) * camSpeed;
+                    playerMove(moveX, moveY);
+                    break;
+                case SDLK_s:
+                    moveX = -cos(camAngle) * camSpeed;
+                    moveY = -sin(camAngle) * camSpeed;
+                    playerMove(moveX, moveY);
+                    break;
+                case SDLK_a:
+                    moveX = sin(camAngle) * camSpeed;
+                    moveY = -cos(camAngle) * camSpeed;
+                    playerMove(moveX, moveY);
+                    break;
+                case SDLK_d:
+                    moveX = -sin(camAngle) * camSpeed;
+                    moveY = cos(camAngle) * camSpeed;
+                    playerMove(moveX, moveY);
+                    break;
+                default:
+                    break;
                 }
             }
-           // User move the mouse
-           else if (e.type == SDL_MOUSEMOTION)
-           {
-                    // Adjust the camera angle left or right based on mouse movements
-                    camAngle += e.motion.xrel * rotSpeed;
-                    // TODO: avoid 360 degree rotation
-           }
+            // User move the mouse
+            else if (e.type == SDL_MOUSEMOTION)
+            {
+                // Adjust the camera angle left or right based on mouse movements
+                camAngle += e.motion.xrel * rotSpeed;
+                // TODO: avoid 360 degree rotation
+            }
         }
 
         // Color the sky rgba
