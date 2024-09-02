@@ -20,7 +20,16 @@ float camX = 3.5f;
 float camY = 3.5f;
 float camAngle = 5.0f;
 
-// Close and free resources
+// Camera rotation speed and movement speed
+const float rotSpeed = M_PI / 4;
+const float camSpeed = 0.1f;
+
+/**
+ * close - Close and free SDL resources
+ *
+ * @gWindow: Pointer to the SDL_Window to be destroyed.
+ * @gRenderer: Pointer to the SDL_Renderer to be destroyted.
+ */
 void close(SDL_Window *gWindow, SDL_Renderer *gRenderer)
 {
     SDL_DestroyRenderer(gRenderer);
@@ -32,21 +41,30 @@ void close(SDL_Window *gWindow, SDL_Renderer *gRenderer)
     SDL_Quit();
 }
 
+/**
+ * main - Entry point of the application.
+ *
+ * @argc: Number of command-line arguments.
+ * @argv: Command-line arguments.
+ *
+ * Return: Exit status, 0 for success, 1 for failure.
+ */
 int main(int argc, char *argv[])
 {
     // Initialize SDL
     if(SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         printf("Could not initialize SDL. Error:%s\n", SDL_GetError());
-        return 0;
+        return 1;
     }
 
     // Create Window
-    SDL_Window *gWindow = SDL_CreateWindow("THe Maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    SDL_Window *gWindow = SDL_CreateWindow("The Maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if(!gWindow)
     {
         printf("Could not create window. Error:%s\n", SDL_GetError());
-        return 0;
+        SDL_Quit();
+        return 1;
     }
 
     // Render. -1 the first rendering driver that supports the flags
@@ -54,8 +72,14 @@ int main(int argc, char *argv[])
     if(!gRenderer)
     {
         printf("Could not create rendering context. Error:%s\n", SDL_GetError());
-        return 0;
+        // Destroy and quit the created window due to the rendering failure.
+        SDL_DestroyWindow(gWindow);
+        SDL_Quit();
+        return 1;
     }
+
+    // Set mouse movement on
+    SDL_SetRelativeMouseMode(SDL_TRUE);
 
     // Set up the main loop
     bool running = true;
@@ -69,6 +93,45 @@ int main(int argc, char *argv[])
             {
                 running = false;
             }
+            // User presses a key
+            else if (e.type == SDL_KEYDOWN)
+            {
+                // Adjust the camera angle left or right based on keyboard
+                switch (e.key.keysym.sym)
+                {
+                    case SDLK_LEFT:
+                        camAngle -= rotSpeed;
+                        break;
+                    case SDLK_RIGHT:
+                        camAngle += rotSpeed;
+                        break;
+                    case SDLK_w:
+                        camX += cos(camAngle) * camSpeed;
+                        camY += sin(camAngle) * camSpeed;
+                        break;
+                    case SDLK_s:
+                        camX -= cos(camAngle) * camSpeed;
+                        camY -= sin(camAngle) * camSpeed;
+                        break;
+                    case SDLK_a:
+                        camX += sin(camAngle) * camSpeed;
+                        camY -= cos(camAngle) * camSpeed;
+                        break;
+                    case SDLK_d:
+                        camX -= sin(camAngle) * camSpeed;
+                        camY += cos(camAngle) * camSpeed;
+                        break;
+                    default:
+                        break;
+                }
+            }
+           // User move the mouse
+           else if (e.type == SDL_MOUSEMOTION)
+           {
+                    // Adjust the camera angle left or right based on mouse movements
+                    camAngle += e.motion.xrel * rotSpeed;
+                    // TODO: avoid 360 degree rotation
+           }
         }
 
         // Color the sky rgba
