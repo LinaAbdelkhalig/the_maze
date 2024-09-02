@@ -1,5 +1,18 @@
 #include "../headers/raycasting.hpp"
 
+/**
+ * renderWalls - This function draws wall in the 3D maze
+ *
+ * @gRenderer: SDL renderer used to draw the walls.
+ * @SCREEN_WIDTH: The width of the screen.
+ * @SCREEN_HEIGHT: The height of the screen.
+ * @wMap: Array that represents the map of walls.
+ * @mWidth: The width of the map in cells.
+ * @mHeight: The height of the map in cells.
+ * @camX: The x-coordinate of the camera position.
+ * @camY: The y-coordinate of the camera position.
+ * @camAngle: The angle of the camera view.
+ */
 void renderWalls(SDL_Renderer *gRenderer, int SCREEN_WIDTH, int SCREEN_HEIGHT, int wMap[8][8], int mWidth, int mHeight, float camX, float camY, float camAngle)
 {
     // Field of view
