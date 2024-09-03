@@ -1,28 +1,25 @@
 #include "../headers/raycasting.hpp"
 
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+Screen SCREEN {1280, 720};
 
 // 1 is a wall and the 0 are empt spaces
 int wMap[8][8] = {
     {1, 1, 1, 1, 1, 1, 1, 1},
-    {1, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 1, 0, 0, 0, 1},
+    {1, 0, 1, 0, 0, 0, 0, 1},
+    {1, 0, 1, 0, 0, 0, 0, 1},
+    {1, 0, 1, 0, 0, 0, 0, 1},
+    {1, 0, 1, 0, 0, 0, 0, 1},
+    {1, 0, 1, 0, 0, 0, 0, 1},
     {1, 0, 0, 0, 0, 0, 0, 1},
     {1, 1, 1, 1, 1, 1, 1, 1}
 };
 
-// Camera positions
-float camX = 3.5f;
-float camY = 3.5f;
-float camAngle = 5.0f;
+// Player starting positions
+Player player {6.0f, 1.0f, 90.0f};
 
 // Camera rotation speed and movement speed
 const float rotSpeed = M_PI / 4;
-const float camSpeed = 0.1f;
+const float camSpeed = 0.05f;
 
 /**
  * checkCollision - checks for collision with walls.
@@ -54,14 +51,14 @@ bool checkCollision(float x, float y)
 void playerMove(float diffX, float diffY)
 {
     // The next move coordinates
-    float nextX = camX + diffX;
-    float nextY = camY + diffY;
+    float nextX = player.x + diffX;
+    float nextY = player.y + diffY;
 
     // Check collision
     if (!checkCollision(nextX, nextY))
     {
-        camX = nextX;
-        camY = nextY;
+        player.x = nextX;
+        player.y = nextY;
     }
     else
     {
@@ -69,10 +66,10 @@ void playerMove(float diffX, float diffY)
         // Sliding coordinates
         float slideX = diffX;
         float slideY = 0.0f;
-        if (checkCollision(camX + slideX, camY + slideY))
+        if (checkCollision(player.x + slideX, player.y + slideY))
         {
-            camX += slideX;
-            camY += slideY;
+            player.x += slideX;
+            player.y += slideY;
         }
         // Slide along the walls (vertical movement)
         else
@@ -80,10 +77,10 @@ void playerMove(float diffX, float diffY)
             // Sliding coordinates
             slideX = 0.0f;
             slideY = diffY;
-            if (checkCollision(camX + slideX, camY + slideY))
+            if (checkCollision(player.x + slideX, player.y + slideY))
             {
-                camX += slideX;
-                camY += slideY;
+                player.x += slideX;
+                player.y += slideY;
             }
         }
     }
@@ -124,7 +121,7 @@ int main(int argc, char* argv[])
     }
 
     // Create Window
-    SDL_Window* gWindow = SDL_CreateWindow("The Maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    SDL_Window* gWindow = SDL_CreateWindow("The Maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN.WIDTH, SCREEN.HEIGHT, SDL_WINDOW_SHOWN);
     if (!gWindow)
     {
         printf("Could not create window. Error:%s\n", SDL_GetError());
@@ -168,29 +165,29 @@ int main(int argc, char* argv[])
                 switch (e.key.keysym.sym)
                 {
                 case SDLK_LEFT:
-                    camAngle -= rotSpeed;
+                    player.camAngle -= rotSpeed;
                     break;
                 case SDLK_RIGHT:
-                    camAngle += rotSpeed;
+                    player.camAngle += rotSpeed;
                     break;
                 case SDLK_w:
-                    moveX = cos(camAngle) * camSpeed;
-                    moveY = sin(camAngle) * camSpeed;
+                    moveX = cos(player.camAngle) * camSpeed;
+                    moveY = sin(player.camAngle) * camSpeed;
                     playerMove(moveX, moveY);
                     break;
                 case SDLK_s:
-                    moveX = -cos(camAngle) * camSpeed;
-                    moveY = -sin(camAngle) * camSpeed;
+                    moveX = -cos(player.camAngle) * camSpeed;
+                    moveY = -sin(player.camAngle) * camSpeed;
                     playerMove(moveX, moveY);
                     break;
                 case SDLK_a:
-                    moveX = sin(camAngle) * camSpeed;
-                    moveY = -cos(camAngle) * camSpeed;
+                    moveX = sin(player.camAngle) * camSpeed;
+                    moveY = -cos(player.camAngle) * camSpeed;
                     playerMove(moveX, moveY);
                     break;
                 case SDLK_d:
-                    moveX = -sin(camAngle) * camSpeed;
-                    moveY = cos(camAngle) * camSpeed;
+                    moveX = -sin(player.camAngle) * camSpeed;
+                    moveY = cos(player.camAngle) * camSpeed;
                     playerMove(moveX, moveY);
                     break;
                 default:
@@ -201,7 +198,7 @@ int main(int argc, char* argv[])
             else if (e.type == SDL_MOUSEMOTION)
             {
                 // Adjust the camera angle left or right based on mouse movements
-                camAngle += e.motion.xrel * rotSpeed;
+                player.camAngle += e.motion.xrel * (rotSpeed / 10.0f);
                 // TODO: avoid 360 degree rotation
             }
         }
@@ -214,7 +211,7 @@ int main(int argc, char* argv[])
         // maybe add error here?
 
         // Draw the walls
-        renderWalls(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT, wMap, 8, 8, camX, camY, camAngle);
+        renderWalls(gRenderer, SCREEN, wMap, 8, 8, player);
 
         // Present the backbuffer to the screen
         SDL_RenderPresent(gRenderer);
