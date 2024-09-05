@@ -10,7 +10,7 @@
  * @mHeight: The height of the map in cells.
  * @player: Struct holding player position information.
  */
-void renderWalls(SDL_Renderer *gRenderer, Screen SCREEN, int wMap[8][8], int mWidth, int mHeight, Player player)
+void renderWalls(SDL_Renderer *gRenderer, Screen SCREEN, SDL_Texture *wallTexture, int wMap[8][8], int mWidth, int mHeight, Player player)
 {
     // Field of view
     float fov = 60.0f * (M_PI / 180.0f);
@@ -103,14 +103,23 @@ void renderWalls(SDL_Renderer *gRenderer, Screen SCREEN, int wMap[8][8], int mWi
         SDL_RenderFillRect(gRenderer, &ground);
 
         // Color the walls
-        if(side) // East or West facing walls
-        {
-            SDL_SetRenderDrawColor(gRenderer, 112, 112, 112, 255);
-        }
-        else // North or South facing walls
-        {
-            SDL_SetRenderDrawColor(gRenderer, 90, 90, 90, 255);
-        }
-        SDL_RenderDrawLine(gRenderer, x, drawStart, x, drawEnd);
+        // if(side) // East or West facing walls
+        // {
+        //     SDL_SetRenderDrawColor(gRenderer, 112, 112, 112, 255);
+        // }
+        // else // North or South facing walls
+        // {
+        //     SDL_SetRenderDrawColor(gRenderer, 90, 90, 90, 255);
+        // }
+        // SDL_RenderDrawLine(gRenderer, x, drawStart, x, drawEnd);
+
+        // Render the textures onto the walls
+        SDL_Rect wallRect;
+        wallRect.x = x;
+        wallRect.w = 1; // Drawing one verical line at a time;
+        wallRect.y = drawStart;
+        wallRect.h = drawEnd - drawStart;
+
+        SDL_RenderCopy(gRenderer, wallTexture, NULL, &wallRect);
     }
 }

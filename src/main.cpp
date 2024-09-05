@@ -140,6 +140,24 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    // Initializing SDL_image for textures
+    if(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
+    {
+        printf("Could not initialize SDL_image. Error:%s\n", SDL_GetError());
+        close(gWindow, gRenderer);
+        return 1;
+    }
+
+    // Loading the textures
+    SDL_Texture* wallTexture = IMG_LoadTexture(gRenderer, "textures/wall_bricks_old_1024.png");
+    if(!wallTexture)
+    {
+        printf("Could not load the texture. Error:%s\n", IMG_GetError());
+        SDL_DestroyRenderer(gRenderer);
+        SDL_DestroyWindow(gWindow);
+        SDL_Quit();
+        return 1;
+    }
     // Set mouse movement on
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
@@ -211,7 +229,7 @@ int main(int argc, char* argv[])
         // maybe add error here?
 
         // Draw the walls
-        renderWalls(gRenderer, SCREEN, wMap, 8, 8, player);
+        renderWalls(gRenderer, SCREEN, wallTexture, wMap, 8, 8, player);
 
         // Present the backbuffer to the screen
         SDL_RenderPresent(gRenderer);
