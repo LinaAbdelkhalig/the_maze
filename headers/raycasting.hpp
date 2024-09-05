@@ -1,9 +1,10 @@
 #ifndef RAYCASTING_HPP
 #define RAYCASTING_HPP
 
+#include <cmath>
 #include <SDL2/SDL.h>
 #include <stdio.h>
-#include <cmath>
+#include <SDL2/SDL_image.h>
 
 /**
  * struct Screen - screen dimensions
@@ -33,6 +34,6 @@ struct Player
     float camAngle {90.0f};
 };
 
-void renderWalls(SDL_Renderer *gRenderer, Screen SCREEN, int wMap[8][8], int mWidth, int mHeight, Player player);
+void renderWalls(SDL_Renderer *gRenderer, Screen SCREEN, SDL_Texture *wallTexture, int wMap[8][8], int mWidth, int mHeight, Player player);
 
 #endif /* RAYCASTING_HPP */
