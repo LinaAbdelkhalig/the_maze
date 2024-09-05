@@ -17,12 +17,13 @@ void renderWalls(SDL_Renderer *gRenderer, Screen SCREEN, SDL_Texture *wallTextur
     float halfFov = fov / 2.0f;
 
     // Drawing the walls using raycasting
-    for(int x = 0; x < SCREEN.WIDTH; x++)
+    for(int x = 0; x < SCREEN.WIDTH; x++) // For the width of the screen
     {
-        float rayAngle = (player.camAngle - halfFov) + ((float)x / (float)SCREEN.WIDTH) *fov;
+        //                  starting leftmost angle     position of the current column relative to screen width
+        float rayAngle = (player.camAngle - halfFov) + ((float)x / (float)SCREEN.WIDTH) * fov;
+        // multiplying the above by pov scales the fractional position across the entire field of view
         float rayX = cos(rayAngle);
         float rayY = sin(rayAngle);
-
 
         int mapX = (int)player.x;
         int mapY = (int)player.y;
