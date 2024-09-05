@@ -4,7 +4,8 @@ CC = g++
 #compiler flags
 CFLAGS = -Wall -Werror -Wextra -pedantic
 
-SDLFLAGS = `sdl2-config --cflags --libs`
+#the sdl2-config command doesnt handle linking SDL2_image
+SDLFLAGS = `sdl2-config --cflags --libs` -lSDL2_image
 
 #files to compile
 SRC = src/main.cpp src/raycasting.cpp
