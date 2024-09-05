@@ -20,7 +20,6 @@ void renderWalls(SDL_Renderer *gRenderer, Screen SCREEN, SDL_Texture *wallTextur
     for(int x = 0; x < SCREEN.WIDTH; x++)
     {
         float rayAngle = (player.camAngle - halfFov) + ((float)x / (float)SCREEN.WIDTH) *fov;
-
         float rayX = cos(rayAngle);
         float rayY = sin(rayAngle);
 
@@ -112,14 +111,34 @@ void renderWalls(SDL_Renderer *gRenderer, Screen SCREEN, SDL_Texture *wallTextur
         //     SDL_SetRenderDrawColor(gRenderer, 90, 90, 90, 255);
         // }
         // SDL_RenderDrawLine(gRenderer, x, drawStart, x, drawEnd);
+        // Calculate texture X coordinate
+        float wallX; // Exact x-coordinate on the wall
+        if(side == 0) wallX = player.y + perpWallDist * rayY;
+        else          wallX = player.x + perpWallDist * rayX;
+        wallX -= floor(wallX);
 
-        // Render the textures onto the walls
-        SDL_Rect wallRect;
-        wallRect.x = x;
-        wallRect.w = 1; // Drawing one verical line at a time;
-        wallRect.y = drawStart;
-        wallRect.h = drawEnd - drawStart;
+        // X coordinate on the texture
+        int TEXTURE_WIDTH = 1024;
+        int TEXTURE_HEIGHT = 1024;
+        int texX = (int)(wallX * (float)TEXTURE_WIDTH);
+        if(side == 0 && rayX > 0) texX = TEXTURE_WIDTH - texX - 1;
+        if(side == 1 && rayY < 0) texX = TEXTURE_WIDTH - texX - 1;
 
-        SDL_RenderCopy(gRenderer, wallTexture, NULL, &wallRect);
+        // Set up the source rectangle
+        SDL_Rect srcRect;
+        srcRect.x = texX;
+        srcRect.y = 0;        
+        srcRect.w = 1;        
+        srcRect.h = TEXTURE_HEIGHT;        
+
+        // Set up the destination rectangle
+        SDL_Rect destRect;
+        destRect.x = x;
+        destRect.y = drawStart;
+        destRect.w = 1;
+        destRect.h = drawEnd - drawStart;
+
+        // Render the textured wall
+        SDL_RenderCopy(gRenderer, wallTexture, &srcRect, &destRect);
     }
 }

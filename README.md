@@ -26,3 +26,4 @@ $ ./the_maze
 ## Dependencies
 - C++ compile
 - SDL2 library
+- SDL_image library
