@@ -1,5 +1,5 @@
 # compiler
-CC = g++
+CC = gcc
 
 #compiler flags
 CFLAGS = -Wall -Werror -Wextra -pedantic
@@ -8,16 +8,19 @@ CFLAGS = -Wall -Werror -Wextra -pedantic
 SDLFLAGS = `sdl2-config --cflags --libs` -lSDL2_image
 
 #files to compile
-SRC = src/main.cpp src/raycasting.cpp
+SRC = src/main.c src/load_textures.c
 
-OBJ = $(SRC:.cpp=.o)
+#math flags
+MATHFLAGS = -lm
+
+OBJ = $(SRC:.c=.o)
 
 TARGET = maze
 
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $^ $(SDLFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^ $(SDLFLAGS) $(MATHFLAGS)
 
 clean:
 	rm -f $(OBJ) $(TARGET)
