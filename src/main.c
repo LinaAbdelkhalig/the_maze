@@ -3,7 +3,7 @@
 // #define MIN(x, y) (x < y ? x : y)
 // #define MAX(x, y) (x > y ? x : y)
 
-#define MAP_SIZE 16
+/*#define MAP_SIZE 16
 const uint8_t MAP[MAP_SIZE * MAP_SIZE] = {
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -22,7 +22,7 @@ const uint8_t MAP[MAP_SIZE * MAP_SIZE] = {
 	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 };
-
+*/
 const float playerFOV = (PI / 2.0f);
 const float maxDepth = 20.0f;
 
@@ -166,8 +166,12 @@ void render(State *state, Player* player) {
     }
 }
 
-int main(void) {
-    ASSERT(!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO),
+int main(int argc, char *argv[])
+{
+	ASSERT((argc == 2), "Usage: %s <map_file_path>\n", argv[0]);
+	/* load the map from the file */
+        getMap(argv[1]);
+	ASSERT(!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO),
            "SDL failed to initialize; %s\n",
            SDL_GetError());
 
@@ -201,7 +205,6 @@ int main(void) {
            SDL_GetError());
 
     loadTextures(&state, &wallTexture); // Load the texture
-
     SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1");
     SDL_SetRelativeMouseMode(true);
 

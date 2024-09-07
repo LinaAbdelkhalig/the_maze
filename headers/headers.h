@@ -14,12 +14,18 @@
 #include <stdbool.h>
 #include <math.h>
 #include <string.h>
+#include <stdlib.h>
+#include <errno.h>
 
 //vars
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
 
 #define PI 3.14159265f
+
+/* global variables */
+extern uint8_t *MAP;
+extern int MAP_SIZE;
 
 // structs
 typedef struct {
@@ -52,5 +58,8 @@ typedef struct {
 
 void loadTextures(State *state, SDL_Texture **wallTexture);
 void renderRain(State* state);
+void getMap(const char *fp);
+// void drawMap(State *state, Player *player0;
+int xy2index(int x, int y, int w);
 
 #endif /* HEADERS_H */
