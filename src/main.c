@@ -35,6 +35,15 @@ int xy2index(int x, int y, int w) {
 SDL_Texture *wallTexture = NULL;
 
 void render(State *state, Player* player) {
+        /* black sky */
+	SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 0);
+	SDL_Rect ceilingRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
+	SDL_RenderFillRect(state->renderer, &ceilingRect);
+
+	/* black floor */
+	SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 0);
+        SDL_Rect floorRect = {0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
+        SDL_RenderFillRect(state->renderer, &floorRect);
     //loop through each vertical strip of the screen
     for (int x = 0; x < SCREEN_WIDTH; ++x) {
         // the left side of the screen is -1, center is 0 and left is 1
@@ -169,7 +178,8 @@ int main(void) {
     }
 
     State state = {
-        .running= true,
+ 	.running = true,
+	.raining = 0,
     };
     state.window =
         SDL_CreateWindow("Raycast",
@@ -216,14 +226,14 @@ int main(void) {
                 case SDL_QUIT:
                     state.running = false;
                     break;
-                case SDL_MOUSEMOTION:
+		case SDL_MOUSEMOTION:
                     mouse_xrel = event.motion.xrel;
                     break;
             }
         }
 
         const uint8_t* keystate = SDL_GetKeyboardState(NULL);
-        if (keystate[SDL_SCANCODE_ESCAPE]) state.running = false;
+	if (keystate[SDL_SCANCODE_ESCAPE]) state.running = false;
         if (mouse_xrel != 0)
         { // rotate
             float rotSpeed = rotateSpeed * (mouse_xrel * -0.1);
@@ -241,7 +251,12 @@ int main(void) {
             .x = player.dir.x * moveSpeed,
             .y = player.dir.y * moveSpeed,
         };
-        if (keystate[SDL_SCANCODE_W])
+	/* r to stop/start rain */
+	if (keystate[SDL_SCANCODE_R])
+	{
+		state.raining = !state.raining;
+	}
+        if (keystate[SDL_SCANCODE_W] || keystate[SDL_SCANCODE_UP])
         { // forward
             if (MAP[xy2index(
                         player.pos.x + deltaPos.x, 
@@ -256,7 +271,7 @@ int main(void) {
                 player.pos.y += deltaPos.y;
             }
         }
-        if (keystate[SDL_SCANCODE_S])
+        if (keystate[SDL_SCANCODE_S] || keystate[SDL_SCANCODE_DOWN])
         { // backwards
             if (MAP[xy2index(
                         player.pos.x - deltaPos.x, 
@@ -271,7 +286,7 @@ int main(void) {
                 player.pos.y -= deltaPos.y;
             }
         }
-        if (keystate[SDL_SCANCODE_D])
+        if (keystate[SDL_SCANCODE_D] || keystate[SDL_SCANCODE_RIGHT])
         { // turn right
             floatVector oldDir = player.dir;
             player.dir.x = oldDir.x * cosf(-rotateSpeed) - oldDir.y * sinf(-rotateSpeed);
@@ -297,7 +312,7 @@ int main(void) {
                 player.pos.y += deltaPos.y;
             }
         }
-        if (keystate[SDL_SCANCODE_A])
+        if (keystate[SDL_SCANCODE_A] || keystate[SDL_SCANCODE_LEFT])
         { // turn left
             floatVector oldDir = player.dir;
             player.dir.x = oldDir.x * cosf(rotateSpeed) - oldDir.y * sinf(rotateSpeed);
@@ -325,8 +340,12 @@ int main(void) {
         }
 
         SDL_RenderClear(state.renderer);
-        render(&state, &player);
-        SDL_RenderPresent(state.renderer);
+	render(&state, &player);
+	if (state.raining)
+	{
+		renderRain(&state);
+	}
+	SDL_RenderPresent(state.renderer);
     }
 
     SDL_DestroyTexture(wallTexture);

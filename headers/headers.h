@@ -34,6 +34,7 @@ typedef struct {
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	bool running;
+	bool raining;
 } State;
 
 typedef struct {
@@ -50,5 +51,6 @@ typedef struct {
   }
 
 void loadTextures(State *state, SDL_Texture **wallTexture);
+void renderRain(State* state);
 
 #endif /* HEADERS_H */
