@@ -1,7 +1,7 @@
 # The Maze Project
 
 ## Overview
-The Maze is a 3D game developed using raycasting techniques. The project was implemented in C++ using SDL2 library for graphics and input handling. The aim is to provide the player's perspective within a maze environment.
+The Maze is a 3D game developed using raycasting techniques. The project was implemented in C using the SDL2 library for rendering and input handling. The aim is to provide the player's perspective within a maze environment.
 
 ## Contributors
 - **Lena Abdelkhalig** - [Github Profile](https://github.com/LinaAbdelkhalig)
