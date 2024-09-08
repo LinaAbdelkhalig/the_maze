@@ -1,0 +1,123 @@
+/* body */
+body {
+    font-family: Ubuntu Mono;
+}
+
+/* end of body */
+
+/* fonts */
+.ubuntu-mono-regular {
+    font-family: "Ubuntu Mono", monospace;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.ubuntu-mono-bold {
+    font-family: "Ubuntu Mono", monospace;
+    font-weight: 700;
+    font-style: normal;
+}
+
+.ubuntu-mono-regular-italic {
+    font-family: "Ubuntu Mono", monospace;
+    font-weight: 400;
+    font-style: italic;
+}
+
+.ubuntu-mono-bold-italic {
+    font-family: "Ubuntu Mono", monospace;
+    font-weight: 700;
+    font-style: italic;
+}
+
+
+
+/* nav */
+#header {
+    font-size: 30px;
+}
+
+.nav-item {
+    margin: 0 30px 0 30px;
+}
+
+.nav-item .nav-link {
+    position: relative;
+    padding-left: 20px;
+    transition: color 0.3s ease;
+}
+
+.nav-item .nav-link::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.1s ease;
+}
+
+.nav-item:hover .nav-link {
+    color: #2e6c30;
+}
+
+.nav-item .nav-link:hover::before,
+.nav-item .nav-link:focus::before,
+.nav-item .nav-link.active::before {
+    content: '>';
+    opacity: 1;
+    color: #2e6c30;
+}
+
+/* end of nav */
+
+/* hero */
+#main-content {
+    margin-top: 60px;
+}
+
+#hero {
+    /*TODO fix height on mobile*/
+    height: 35em;
+    background-image: url("../img/hero-placeholder");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#hero-text {
+    margin-top: 13em;
+}
+
+#hero-text h1 {
+    font-size: 3.5em;
+}
+
+#typewriter-text {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    font-size: 1.5em;
+}
+
+#typewriter-cursor {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    animation: blink-caret 0.75s step-end infinite;
+}
+
+/* Blinking underscore effect */
+@keyframes blink-caret {
+
+    from,
+    to {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+/* endo of hero */
