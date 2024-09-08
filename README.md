@@ -24,6 +24,6 @@ $ ./the_maze
   - Use up and down arrow keys, or 'w' and 's' to move forward and backwards.
 
 ## Dependencies
-- C++ compile
+- GCC compiler
 - SDL2 library
 - SDL_image library
