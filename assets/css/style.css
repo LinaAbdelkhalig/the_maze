@@ -164,11 +164,11 @@ footer a:hover::before {
 footer {
     height: 5em;
     padding-top: 2em;
+    background-color: rgb(3 166 60 / 29%);
 }
 footer a
 {
     color: black;
     font-size: 1.2em;
-    background-color: rgb(3 166 60 / 29%);
 }
 /* end of footer section */
