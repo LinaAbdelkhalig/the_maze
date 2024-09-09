@@ -39,7 +39,7 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav mx-auto">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="#features-container">Features</a>
+                            <a class="nav-link" aria-current="page" href="#features-container">Technologies</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#about-container">About</a>
@@ -69,76 +69,94 @@
         <!-- end of Hero -->
 
         <!-- Features Section -->
-        <div id="features-container" class="row">
-            <div id="features-heading" class="row">
-                <h1>Features</h1>
-                <br>
+        <div id="features-container" class="container-fluid">
+            <div id="features-heading" class="row text-center mb-4">
+                <h1>How the Game Works</h1>
+                <hr class="w-25 mx-auto">
             </div>
+
             <div id="features-top" class="row">
-                <div class="col-md-6">
-                    <img class="features-img img-fluid">
+                <div class="col-md-6 text-end">
+                    <img class="features-img img-fluid" src="assets/img/raycastperpwalldist2.png">
                 </div>
                 <div class="col-md-6">
-                    <h1>Feature 1</h1>
-                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Facere veritatis tenetur repellendus
-                        dicta, earum, aut dolorum dolore suscipit impedit beatae quas rerum recusandae repudiandae dolor
-                        veniam explicabo. Optio, corporis similique.</p>
+                    <h1>Raycasting</h1>
+                    <p class="text-justify">"The Maze" is developed using the rayscasting technique. Raycasting is a
+                        rendering technique to
+                        create a 3D perspective in a 2D map. Ryas are cast from the perspective of the camera/ player
+                        onto the window of the game and the distance and height of the elements and obstacles in the
+                        game are calculated to give a 3D feel to what the player sees on their screen. Raycasting is
+                        fairly fast, because only a calculation has to be done for every vertical line of the screen.
+                        One of the most famous games "Wolfenstein 3D" was developed usign raycasting.</p>
                 </div>
             </div>
-            <div id="features-mid" class="row">
-                <div class="col-md-6"></div>
-                <h1>Feature 2</h1>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Facere veritatis tenetur repellendus
-                    dicta, earum, aut dolorum dolore suscipit impedit beatae quas rerum recusandae repudiandae dolor
-                    veniam explicabo. Optio, corporis similique.</p>
+
+            <div id="features-mid" class="row mt-5">
+                <div class="col-md-6 text-end">
+                    <h1>SDL2</h1>
+                    <p class="text-justify">Simple DirectMedia Layer is a cross-platform development library that
+                        provides low level
+                        access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D. We
+                        used to develop the game along with the C programming language</p>
+                </div>
+                <div class="col-md-6">
+                    <img class="features-img img-fluid" src="assets/img/sdl2.png">
+                </div>
             </div>
-            <div class="col-md-6">
-                <img class="features-img img-fluid">
+
+            <div id="features-bot" class="row mt-5">
+                <div class="col-md-6 text-end">
+                    <img class="features-img img-fluid" src="assets/img/mazegif.gif">
+                </div>
+                <div class="col-md-6">
+                    <h1>The Final Product</h1>
+                    <p class="text-justify">The video to the side depicts the final look of the game after combining the
+                        capabilities of the
+                        SDL2 library with C programming language and implementing the raycasting technique</p>
+                </div>
             </div>
+
         </div>
-        <div id="features-bot" class="row">
-            <div class="col-md-6">
-                <img class="features-img img-fluid">
-            </div>
-            <div class="col-md-6">
-                <h1>Feature 3</h1>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Facere veritatis tenetur repellendus
-                    dicta, earum, aut dolorum dolore suscipit impedit beatae quas rerum recusandae repudiandae dolor
-                    veniam explicabo. Optio, corporis similique.</p>
-            </div>
-        </div>
+
     </div>
     <!-- end of features section -->
 
     <!-- About section -->
-    <div id="about-container" class="row">
-        <h1 id="about-heading">About The Maze</h1>
-        <div id="what-inspired">
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Reprehenderit accusamus eos repellendus, ut
-                animi, hic dolorem odio eligendi adipisci accusantium totam quidem ab quod velit consectetur dolorum
-                esse molestias? Sed.</p>
-        </div>
+    <div id="about-container" class="container w-100">
+        <h1 id="about-heading" class="text-center mb-5">What Inspired Us To Work On This Project</h1>
+        <p class="w-50 text-center mx-auto">We developed "The Maze" as a portfolio project for our foundations stage at
+            <a href="https://www.holbertonschool.com/">Holberton School</a> take a look at the team members and
+            what inspired us to work on this project</p>
+
+        <!-- teams section -->
         <div id="team-container" class="row">
-            <div id="lina" class="col-md-6">
-                <div class="card" style="width: 18rem;">
-                    <img src="..." class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of
-                            the card's content.</p>
-                    </div>
+
+            <!-- lina -->
+            <div id="lina" class="col-md-6 text-center">
+                <div class="card-body shadow-sm p-3 mb-5 bg-body rounded">
+                    <h3>Lina Abdelkhalig: </h3>
+                    <p class="card-text text-justify">"Ever since I could remeber and up to this date, I have loved
+                        playing video
+                        games on all different consoles, and as I find myself working on this project I am
+                        overwhelmed by the rush of ideas to improve and take this project further."</p>
                 </div>
             </div>
-            <div id="nafisa" class="col-md-6">
-                <div class="card" style="width: 18rem;">
-                    <img src="..." class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of
-                            the card's content.</p>
-                    </div>
+
+            <!-- nafisa -->
+            <div id="nafisa" class="col-md-6 text-center">
+                <div class="card-body shadow-sm p-3 mb-5 bg-body rounded">
+                    <h3>Nafisa Hassan: </h3>
+                    <p class="card-text text-justify">"Ever since I could remeber and up to this date, I have loved
+                        playing video
+                        games on all different consoles, and as I find myself working on this project I am
+                        overwhelmed by the rush of ideas to improve and take this project further."</p>
                 </div>
             </div>
+
         </div>
-        <p>You can find the code for the project <a href="https://linaabdelkhalig.github.io/the_maze/">here</a></p>
+        <!-- end of teams section -->
+
+        <p class="text-center">You can find the Github repository for the project <a href="https://linaabdelkhalig.github.io/the_maze/">here</a></p>
     </div>
     <!-- end of about section -->
 
@@ -152,8 +170,12 @@
 
     <!--footer-->
     <footer id="footer" class="footer position-relative dark-background">
+        <div class="container row text-center mx-auto">
+            <div class="col-md-4 text-center"><a href="#features-container">Technologies</a></div>
+            <div class="col-md-4 text-center"><a href="#about-container">About</a></div>
+            <div class="col-md-4 text-center"><a href="#extra-section">Extra</a></div>
+        </div>
 
-        <!--TODO add links-->
     </footer>
     <!-- end of footer-->
 

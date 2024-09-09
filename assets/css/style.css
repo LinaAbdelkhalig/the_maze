@@ -1,3 +1,11 @@
+.text-justify {
+    text-align: justify;
+}
+
+a {
+    text-decoration: none;
+}
+
 /* body */
 body {
     font-family: Ubuntu Mono;
@@ -34,20 +42,20 @@ body {
 
 /* nav */
 #header {
-    font-size: 1.5em;
+    font-size: 22px;
 }
 
 .nav-item {
     margin: 0 30px 0 30px;
 }
 
-.nav-item .nav-link {
+.nav-item .nav-link , footer a{
     position: relative;
     padding-left: 20px;
     transition: color 0.3s ease;
 }
 
-.nav-item .nav-link::before {
+.nav-item .nav-link::before, footer a::before {
     content: '';
     position: absolute;
     left: -10px;
@@ -57,16 +65,17 @@ body {
     transition: opacity 0.1s ease;
 }
 
-.nav-item:hover .nav-link {
-    color: #2e6c30;
+.nav-item:hover .nav-link, footer a:hover {
+    color: #025939;
 }
 
 .nav-item .nav-link:hover::before,
 .nav-item .nav-link:focus::before,
-.nav-item .nav-link.active::before {
+.nav-item .nav-link.active::before,
+footer a:hover::before {
     content: '>';
     opacity: 1;
-    color: #2e6c30;
+    color: #025939;
 }
 
 /* end of nav */
@@ -121,3 +130,45 @@ body {
 }
 
 /* endo of hero */
+
+/* features section */
+#features-top,
+#features-mid,
+#features-bot {
+    margin-right: 15em;
+    margin-left: 15em;
+}
+
+#features-top>div:first-child,
+#features-mid h1,
+#features-mid p,
+#features-bot>div:first-child {
+    padding-right: 50px;
+}
+
+.features-img {
+    height: 255px;
+}
+
+/* end of features section */
+
+/* about section */
+#about-container {
+    margin-top: 8em;
+    margin-bottom: 8em;
+}
+
+/* end of about section */
+
+/* footer section */
+footer {
+    height: 5em;
+    padding-top: 2em;
+}
+footer a
+{
+    color: black;
+    font-size: 1.2em;
+    background-color: rgb(3 166 60 / 29%);
+}
+/* end of footer section */
