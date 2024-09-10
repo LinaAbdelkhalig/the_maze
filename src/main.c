@@ -35,15 +35,16 @@ int xy2index(int x, int y, int w) {
 SDL_Texture *wallTexture = NULL;
 
 void render(State *state, Player* player) {
-        /* black sky */
+    /* black sky */
 	SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 0);
 	SDL_Rect ceilingRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
 	SDL_RenderFillRect(state->renderer, &ceilingRect);
 
 	/* black floor */
 	SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 0);
-        SDL_Rect floorRect = {0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
-        SDL_RenderFillRect(state->renderer, &floorRect);
+    SDL_Rect floorRect = {0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
+    SDL_RenderFillRect(state->renderer, &floorRect);
+
     //loop through each vertical strip of the screen
     for (int x = 0; x < SCREEN_WIDTH; ++x) {
         // the left side of the screen is -1, center is 0 and left is 1
@@ -154,10 +155,25 @@ void render(State *state, Player* player) {
         } else {
             wallX = player->pos.x + perpWallDist * rayDir.x;
         }
+
         int TEXTURE_WIDTH = 1024;
         int TEXTURE_HEIGHT = 1024;
+
         wallX -= floorf(wallX); // calculate the exact position within the texture
         int texX = (int)(wallX * (float)TEXTURE_WIDTH); // texture width
+
+        if(side == EastWest && rayDir.x > 0) texX = TEXTURE_WIDTH - texX - 1;
+        if(side == NorthSouth && rayDir.y < 0) texX = TEXTURE_WIDTH - texX - 1;
+
+        // Darken texture if wall is on NorthSouth side
+        Uint8 r = 255, g = 255, b = 255;
+        if (side == NorthSouth) {
+            r = 160;
+            g = 160;
+            b = 160;
+        }
+
+        SDL_SetTextureColorMod(wallTexture, r, g, b);
 
         // Draw textured wall
         SDL_Rect srcRect = { texX, 0, 1, TEXTURE_HEIGHT }; // texture coordinates
