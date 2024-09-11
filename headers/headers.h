@@ -17,12 +17,10 @@
 #include <stdlib.h>
 #include <errno.h>
 
-/* Constants */
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
+/* global variables */
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 480
 #define PI 3.14159265f
-
-/* Global variables */
 extern uint8_t *MAP;
 extern int MAP_SIZE;
 
@@ -79,6 +77,21 @@ typedef struct Player
 	floatVector plane;
 } Player;
 
+/**
+ * enum Side - The direction the wall is facing.
+ *
+ * @NorthSouth: Whether the wall is facing north or south.
+ * @EastWest: Whether the wall is facing east or west.
+ *
+ * This enum is used to determin the direction the wall is facing
+ * to ddetermin whether it will be shaded or not.
+ */
+typedef enum Side
+{
+	NorthSouth,
+	EastWest
+} Side;
+
 /* Functions */
 #define ASSERT(cond, ...) \
 	do { \
@@ -90,7 +103,12 @@ typedef struct Player
 	} while (0)
 
 /* Function declarations */
-void loadTextures(State *state, SDL_Texture **wallTexture);
+void loadTextures(State *state, SDL_Texture **texture, const char *path);
+void renderFlrClng(State *state, Player *player, int texWidth,
+		int texHeight, SDL_Texture **flrTexture,
+		SDL_Texture **clngTexture);
+void renderWall(State *state, Player *player, int texWidth,
+		int texHeight, SDL_Texture **wallTexture);
 void renderRain(State *state);
 void getMap(const char *fp);
 int xy2index(int x, int y, int w);
