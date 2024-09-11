@@ -1,6 +1,11 @@
 #include "../headers/headers.h"
 
-void renderRain(State* state)
+/**
+ * renderRain - Renders the rain effect.
+ *
+ * @state: Pointer to the game state.
+ */
+void renderRain(State *state)
 {
 	/* The loop is the number of drops in the screen */
 	for (int i = 0; i < 100; i++)
@@ -8,7 +13,7 @@ void renderRain(State* state)
 		/* The drop x and y coordinates */
 		int x = rand() % SCREEN_WIDTH;
 		int y = rand() % SCREEN_HEIGHT;
-	        /* Random length for the raindrop */
+		/* Random length for the raindrop */
 		int len = rand() % 10 + 5;
 
 		/* Raindrop color is transparent light blue */
