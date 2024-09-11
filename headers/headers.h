@@ -17,49 +17,82 @@
 #include <stdlib.h>
 #include <errno.h>
 
-//vars
+/* Constants */
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
-
 #define PI 3.14159265f
 
-/* global variables */
+/* Global variables */
 extern uint8_t *MAP;
 extern int MAP_SIZE;
 
-// structs
-typedef struct {
-    float x, y;
+/* Structs */
+/**
+ * struct floatVector - The vector with float x and y coordinates.
+ *
+ * @x: The x-coordinate.
+ * @y: The y-coordinate.
+ */
+typedef struct floatVector
+{
+	float x, y;
 } floatVector;
 
-typedef struct {
-    int x, y;
+/**
+ * struct IntVector - The vector with integer x and y coordinates.
+ *
+ * @x: The x-coordinate.
+ * @y: The y-coordinate.
+ */
+typedef struct IntVector
+{
+	int x, y;
 } IntVector;
 
-typedef struct {
-	SDL_Window* window;
-	SDL_Renderer* renderer;
+/**
+ * struct State - The state of the game.
+ *
+ * @window: The SDL window.
+ * @renderer: The SDL renderer.
+ * @running: Flag indicating if the game is running.
+ * @raining: Flag indicating if it is raining.
+ */
+typedef struct State
+{
+	SDL_Window *window;
+	SDL_Renderer *renderer;
 	bool running;
 	bool raining;
 } State;
 
-typedef struct {
+/**
+ * struct Player - The game player.
+ *
+ * @pos: The position of the player.
+ * @dir: The direction the player is facing.
+ * @plane: The plane of the player's view.
+ */
+typedef struct Player
+{
 	floatVector pos;
 	floatVector dir;
-    floatVector plane;
+	floatVector plane;
 } Player;
 
-//functions
-#define ASSERT(cond, ...)                                                      \
-  if (!cond) {                                                                 \
-    fprintf(stderr, __VA_ARGS__);                                              \
-    exit(1);                                                                   \
-  }
+/* Functions */
+#define ASSERT(cond, ...) \
+	do { \
+		if (!cond) \
+		{ \
+			fprintf(stderr, __VA_ARGS__); \
+			exit(1); \
+		} \
+	} while (0)
 
+/* Function declarations */
 void loadTextures(State *state, SDL_Texture **wallTexture);
-void renderRain(State* state);
+void renderRain(State *state);
 void getMap(const char *fp);
-// void drawMap(State *state, Player *player0;
 int xy2index(int x, int y, int w);
 
 #endif /* HEADERS_H */
