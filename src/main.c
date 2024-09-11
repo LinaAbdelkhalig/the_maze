@@ -5,80 +5,129 @@
 
 /*#define MAP_SIZE 16
 const uint8_t MAP[MAP_SIZE * MAP_SIZE] = {
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	1, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0, 0, 2, 0, 1,
-	1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 2, 0, 1, 
-	1, 0, 0, 0, 0, 0, 3, 2, 2, 2, 2, 2, 2, 2, 0, 1,
-	1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 2, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 2, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 2, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0, 0, 2, 0, 1,
+    1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 2, 0, 1,
+    1, 0, 0, 0, 0, 0, 3, 2, 2, 2, 2, 2, 2, 2, 0, 1,
+    1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 2, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 2, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 2, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 };
 */
 const float playerFOV = (PI / 2.0f);
 const float maxDepth = 20.0f;
 
-typedef enum {NorthSouth, EastWest} Side;
+typedef enum
+{
+    NorthSouth,
+    EastWest
+} Side;
 
-int xy2index(int x, int y, int w) {
+int xy2index(int x, int y, int w)
+{
     return y * w + x;
 }
 
 SDL_Texture *wallTexture = NULL;
+SDL_Texture *floorTexture = NULL;
+SDL_Texture *ceilingTexture = NULL;
 
-void render(State *state, Player* player) {
+void render(State *state, Player *player)
+{
     /* black sky */
-	SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 0);
-	SDL_Rect ceilingRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
-	SDL_RenderFillRect(state->renderer, &ceilingRect);
+    SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 0);
+    SDL_Rect ceilingRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
+    SDL_RenderFillRect(state->renderer, &ceilingRect);
 
-	/* black floor */
-	SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 0);
-    SDL_Rect floorRect = {0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
-    SDL_RenderFillRect(state->renderer, &floorRect);
+    /* black floor */
+    // SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 0);
+    // SDL_Rect floorRect = {0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
+    // SDL_RenderFillRect(state->renderer, &floorRect);
 
-    //loop through each vertical strip of the screen
-    for (int x = 0; x < SCREEN_WIDTH; ++x) {
+    for (int y = SCREEN_HEIGHT / 2 + 1; y < SCREEN_HEIGHT; ++y)
+    {
+        int texWidth = 16;
+        int texHeight = 16;
+        // Floor and ceiling casting algorithm similar to what you provided
+        double rayDirX0 = player->dir.x - player->plane.x;
+        double rayDirY0 = player->dir.y - player->plane.y;
+        double rayDirX1 = player->dir.x + player->plane.x;
+        double rayDirY1 = player->dir.y + player->plane.y;
+
+        int p = y - SCREEN_HEIGHT / 2;
+        double posZ = 0.5 * SCREEN_HEIGHT;
+        double rowDistance = posZ / p;
+
+        double floorStepX = rowDistance * (rayDirX1 - rayDirX0) / SCREEN_WIDTH;
+        double floorStepY = rowDistance * (rayDirY1 - rayDirY0) / SCREEN_WIDTH;
+
+        double floorX = player->pos.x + rowDistance * rayDirX0;
+        double floorY = player->pos.y + rowDistance * rayDirY0;
+
+        for (int x = 0; x < SCREEN_WIDTH; ++x)
+        {
+            // Floor and ceiling texture coordinates
+            int cellX = (int)(floorX);
+            int cellY = (int)(floorY);
+
+            int tx = (int)(texWidth * (floorX - cellX)) & (texWidth - 1);
+            int ty = (int)(texHeight * (floorY - cellY)) & (texHeight - 1);
+
+            floorX += floorStepX;
+            floorY += floorStepY;
+
+            SDL_Rect srcRect = {tx, ty, 1, 1};
+            SDL_Rect dstRectFloor = {x, y, 1, 1};
+            SDL_Rect dstRectCeiling = {x, SCREEN_HEIGHT - y - 1, 1, 1};
+
+            SDL_RenderCopy(state->renderer, floorTexture, &srcRect, &dstRectFloor);
+            SDL_RenderCopy(state->renderer, ceilingTexture, &srcRect, &dstRectCeiling);
+        }
+    }
+
+    // loop through each vertical strip of the screen
+    for (int x = 0; x < SCREEN_WIDTH; ++x)
+    {
         // the left side of the screen is -1, center is 0 and left is 1
         float cameraX = 2 * x / (float)SCREEN_WIDTH - 1;
-        //direction of the ray being cast
+        // direction of the ray being cast
         floatVector rayDir = {
             .x = player->dir.x + player->plane.x * cameraX,
             .y = player->dir.y + player->plane.y * cameraX,
         };
 
         // current position on the map squares
-        //the ray position is more accurate
+        // the ray position is more accurate
         IntVector mapBox = {
-            .x = (int)player->pos.x, 
-            .y = (int)player->pos.y
-        };
+            .x = (int)player->pos.x,
+            .y = (int)player->pos.y};
 
         // distance the ray travels from start position to the next x/y-side
         floatVector sideDist = {0.0, 0.0};
 
         // ditance traveled from current x/y-side to the next
         floatVector deltaDist = {
-            .x = (rayDir.x == 0) ? 1e30 : fabsf(1 / rayDir.x), //the 1e30 is to avoid dividing by zero and getting infinite
+            .x = (rayDir.x == 0) ? 1e30 : fabsf(1 / rayDir.x), // the 1e30 is to avoid dividing by zero and getting infinite
             .y = (rayDir.y == 0) ? 1e30 : fabsf(1 / rayDir.y),
         };
 
-        //will be used to calculate the length of the ray
+        // will be used to calculate the length of the ray
         float perpWallDist;
-        
+
         // What direction to step in x- or y-direction (either +1 or -1)
         IntVector stepDir = {0, 0};
 
         bool hit = false; // was there a wall hit
-        Side side; // whether a northsouth/y side or a eastwest/x side was hit
+        Side side;        // whether a northsouth/y side or a eastwest/x side was hit
 
         // if the ray dirx is negative
         if (rayDir.x < 0)
@@ -104,25 +153,30 @@ void render(State *state, Player* player) {
         }
 
         // start dda
-        while (!hit) {
+        while (!hit)
+        {
             // jump to next map square
-            if (sideDist.x < sideDist.y) {
+            if (sideDist.x < sideDist.y)
+            {
                 sideDist.x += deltaDist.x;
                 mapBox.x += stepDir.x;
                 side = EastWest; // 0
-            } else {
+            }
+            else
+            {
                 sideDist.y += deltaDist.y;
                 mapBox.y += stepDir.y;
-                side = NorthSouth; //1
+                side = NorthSouth; // 1
             }
             // check if ray has hit a wall
-            if (MAP[xy2index(mapBox.x, mapBox.y, MAP_SIZE)] > 0) {
+            if (MAP[xy2index(mapBox.x, mapBox.y, MAP_SIZE)] > 0)
+            {
                 hit = true;
             }
         }
 
         // Calculate the distance projected on camera direction
-        if(side == EastWest)
+        if (side == EastWest)
         {
             perpWallDist = (sideDist.x - deltaDist.x);
         }
@@ -130,44 +184,44 @@ void render(State *state, Player* player) {
         {
             perpWallDist = (sideDist.y - deltaDist.y);
         }
-        // switch (side) {
-        //     case EastWest:
-        //         perpWallDist = (sideDist.x - deltaDist.x);
-        //         break;
-        //     case NorthSouth:
-        //         perpWallDist = (sideDist.y - deltaDist.y);
-        //         break;
-        // }
 
-        // Calculate height of line to draw on screen 
+        // Calculate height of line to draw on screen
         int lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
 
         // calculate lowest and highest pixel to fill in current stripe
         int drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2;
-        if (drawStart < 0) drawStart = 0;
-        int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2; 
-        if (drawEnd >= SCREEN_HEIGHT) drawEnd = SCREEN_HEIGHT;
+        if (drawStart < 0)
+            drawStart = 0;
+        int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
+        if (drawEnd >= SCREEN_HEIGHT)
+            drawEnd = SCREEN_HEIGHT;
 
         // Calculate texture coordinates
         float wallX; // where the wall was hit
-        if (side == EastWest) {
+        if (side == EastWest)
+        {
             wallX = player->pos.y + perpWallDist * rayDir.y;
-        } else {
+        }
+        else
+        {
             wallX = player->pos.x + perpWallDist * rayDir.x;
         }
 
-        int TEXTURE_WIDTH = 1024;
-        int TEXTURE_HEIGHT = 1024;
+        int TEXTURE_WIDTH = 32;
+        int TEXTURE_HEIGHT = 32;
 
-        wallX -= floorf(wallX); // calculate the exact position within the texture
+        wallX -= floorf(wallX);                         // calculate the exact position within the texture
         int texX = (int)(wallX * (float)TEXTURE_WIDTH); // texture width
 
-        if(side == EastWest && rayDir.x > 0) texX = TEXTURE_WIDTH - texX - 1;
-        if(side == NorthSouth && rayDir.y < 0) texX = TEXTURE_WIDTH - texX - 1;
+        if (side == EastWest && rayDir.x > 0)
+            texX = TEXTURE_WIDTH - texX - 1;
+        if (side == NorthSouth && rayDir.y < 0)
+            texX = TEXTURE_WIDTH - texX - 1;
 
         // Darken texture if wall is on NorthSouth side
         Uint8 r = 255, g = 255, b = 255;
-        if (side == NorthSouth) {
+        if (side == NorthSouth)
+        {
             r = 160;
             g = 160;
             b = 160;
@@ -176,30 +230,30 @@ void render(State *state, Player* player) {
         SDL_SetTextureColorMod(wallTexture, r, g, b);
 
         // Draw textured wall
-        SDL_Rect srcRect = { texX, 0, 1, TEXTURE_HEIGHT }; // texture coordinates
-        SDL_Rect destRect = { x, drawStart, 1, lineHeight }; // screen coordinates
+        SDL_Rect srcRect = {texX, 0, 1, TEXTURE_HEIGHT};   // texture coordinates
+        SDL_Rect destRect = {x, drawStart, 1, lineHeight}; // screen coordinates
         SDL_RenderCopy(state->renderer, wallTexture, &srcRect, &destRect);
     }
 }
 
 int main(int argc, char *argv[])
 {
-	ASSERT((argc == 2), "Usage: %s <map_file_path>\n", argv[0]);
-	/* load the map from the file */
-        getMap(argv[1]);
-	ASSERT(!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO),
+    ASSERT((argc == 2), "Usage: %s <map_file_path>\n", argv[0]);
+    /* load the map from the file */
+    getMap(argv[1]);
+    ASSERT(!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO),
            "SDL failed to initialize; %s\n",
            SDL_GetError());
 
-    if(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
+    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
     {
         printf("Could not initialize SDL_image. Error:%s\n", IMG_GetError());
         return 1;
     }
 
     State state = {
- 	.running = true,
-	.raining = 0,
+        .running = true,
+        .raining = 0,
     };
     state.window =
         SDL_CreateWindow("Raycast",
@@ -220,14 +274,16 @@ int main(int argc, char *argv[])
            "failed to create SDL renderer: %s\n",
            SDL_GetError());
 
-    loadTextures(&state, &wallTexture); // Load the texture
+    loadTextures(&state, &floorTexture, "textures/bronze_plank.png");
+    loadTextures(&state, &wallTexture, "textures/wall_bricks_old_32.png");
+    loadTextures(&state, &ceilingTexture, "textures/bronze_plank.png");
     SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1");
     SDL_SetRelativeMouseMode(true);
 
     // Initial direction and position and camera plane
     Player player = {
-        .pos = {.x =  4.0f, .y =  4.0f},
-        .dir = {.x = -1.0f, .y =  0.0f},
+        .pos = {.x = 4.0f, .y = 4.0f},
+        .dir = {.x = -1.0f, .y = 0.0f},
         .plane = {.x = 0.0f, .y = 0.66f},
     };
 
@@ -235,73 +291,80 @@ int main(int argc, char *argv[])
         rotateSpeed = 0.025,
         moveSpeed = 0.05;
 
-    //the main loop
+    // the main loop
     while (state.running)
     {
         SDL_Event event;
         int mouse_xrel = 0;
-        while (SDL_PollEvent(&event)) {
-            switch (event.type) {
-                case SDL_QUIT:
-                    state.running = false;
-                    break;
-		case SDL_MOUSEMOTION:
-                    mouse_xrel = event.motion.xrel;
-                    break;
+        while (SDL_PollEvent(&event))
+        {
+            switch (event.type)
+            {
+            case SDL_QUIT:
+                state.running = false;
+                break;
+            case SDL_MOUSEMOTION:
+                mouse_xrel = event.motion.xrel;
+                break;
             }
         }
 
-        const uint8_t* keystate = SDL_GetKeyboardState(NULL);
-	if (keystate[SDL_SCANCODE_ESCAPE]) state.running = false;
+        const uint8_t *keystate = SDL_GetKeyboardState(NULL);
+        if (keystate[SDL_SCANCODE_ESCAPE])
+            state.running = false;
         if (mouse_xrel != 0)
         { // rotate
             float rotSpeed = rotateSpeed * (mouse_xrel * -0.1);
             // both camera direction and camera plane must be rotated
             floatVector oldDir = player.dir;
             player.dir.x = player.dir.x * cosf(rotSpeed) - player.dir.y * sinf(rotSpeed);
-            player.dir.y = oldDir.x     * sinf(rotSpeed) + player.dir.y * cosf(rotSpeed);
+            player.dir.y = oldDir.x * sinf(rotSpeed) + player.dir.y * cosf(rotSpeed);
 
             floatVector oldPlane = player.plane;
             player.plane.x = player.plane.x * cosf(rotSpeed) - player.plane.y * sinf(rotSpeed);
-            player.plane.y = oldPlane.x     * sinf(rotSpeed) + player.plane.y * cosf(rotSpeed);
+            player.plane.y = oldPlane.x * sinf(rotSpeed) + player.plane.y * cosf(rotSpeed);
         }
 
         floatVector deltaPos = {
             .x = player.dir.x * moveSpeed,
             .y = player.dir.y * moveSpeed,
         };
-	/* r to stop/start rain */
-	if (keystate[SDL_SCANCODE_R])
-	{
-		state.raining = !state.raining;
-	}
+        /* r to stop/start rain */
+        if (keystate[SDL_SCANCODE_R])
+        {
+            state.raining = !state.raining;
+        }
         if (keystate[SDL_SCANCODE_W] || keystate[SDL_SCANCODE_UP])
         { // forward
             if (MAP[xy2index(
-                        player.pos.x + deltaPos.x, 
-                        player.pos.y, 
-                        MAP_SIZE)] == 0){
+                    player.pos.x + deltaPos.x,
+                    player.pos.y,
+                    MAP_SIZE)] == 0)
+            {
                 player.pos.x += deltaPos.x;
             }
             if (MAP[xy2index(
-                        player.pos.x, 
-                        player.pos.y + deltaPos.y, 
-                        MAP_SIZE)] == 0) {
+                    player.pos.x,
+                    player.pos.y + deltaPos.y,
+                    MAP_SIZE)] == 0)
+            {
                 player.pos.y += deltaPos.y;
             }
         }
         if (keystate[SDL_SCANCODE_S] || keystate[SDL_SCANCODE_DOWN])
         { // backwards
             if (MAP[xy2index(
-                        player.pos.x - deltaPos.x, 
-                        player.pos.y, 
-                        MAP_SIZE)] == 0) {
+                    player.pos.x - deltaPos.x,
+                    player.pos.y,
+                    MAP_SIZE)] == 0)
+            {
                 player.pos.x -= deltaPos.x;
             }
             if (MAP[xy2index(
-                        player.pos.x, 
-                        player.pos.y - deltaPos.y, 
-                        MAP_SIZE)] == 0) {
+                    player.pos.x,
+                    player.pos.y - deltaPos.y,
+                    MAP_SIZE)] == 0)
+            {
                 player.pos.y -= deltaPos.y;
             }
         }
@@ -319,15 +382,17 @@ int main(int argc, char *argv[])
             deltaPos.y = player.plane.y * moveSpeed;
 
             if (MAP[xy2index(
-                        player.pos.x + deltaPos.x, 
-                        player.pos.y, 
-                        MAP_SIZE)] == 0) {
+                    player.pos.x + deltaPos.x,
+                    player.pos.y,
+                    MAP_SIZE)] == 0)
+            {
                 player.pos.x += deltaPos.x;
             }
             if (MAP[xy2index(
-                        player.pos.x, 
-                        player.pos.y + deltaPos.y, 
-                        MAP_SIZE)] == 0) {
+                    player.pos.x,
+                    player.pos.y + deltaPos.y,
+                    MAP_SIZE)] == 0)
+            {
                 player.pos.y += deltaPos.y;
             }
         }
@@ -345,26 +410,28 @@ int main(int argc, char *argv[])
             deltaPos.y = player.plane.y * moveSpeed;
 
             if (MAP[xy2index(
-                        player.pos.x - deltaPos.x, 
-                        player.pos.y, 
-                        MAP_SIZE)] == 0) {
+                    player.pos.x - deltaPos.x,
+                    player.pos.y,
+                    MAP_SIZE)] == 0)
+            {
                 player.pos.x -= deltaPos.x;
             }
             if (MAP[xy2index(
-                        player.pos.x, 
-                        player.pos.y - deltaPos.y, 
-                        MAP_SIZE)] == 0) {
+                    player.pos.x,
+                    player.pos.y - deltaPos.y,
+                    MAP_SIZE)] == 0)
+            {
                 player.pos.y -= deltaPos.y;
             }
         }
 
         SDL_RenderClear(state.renderer);
-	render(&state, &player);
-	if (state.raining)
-	{
-		renderRain(&state);
-	}
-	SDL_RenderPresent(state.renderer);
+        render(&state, &player);
+        if (state.raining)
+        {
+            renderRain(&state);
+        }
+        SDL_RenderPresent(state.renderer);
     }
 
     SDL_DestroyTexture(wallTexture);
