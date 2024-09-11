@@ -1,7 +1,19 @@
 #include "../headers/headers.h"
 
-void renderFlrClng(State *state, Player *player, int texWidth, int texHeight,
-		   SDL_Texture **flrTexture, SDL_Texture **clngTexture)
+/**
+ * renderFlrClng - Renders the textures for the ceiling and floor
+ *
+ * @state: The struct holding the window and renderer
+ * @player: The struct holding the players position information
+ * @texWidth: Width of the texture
+ * @texHeight: The height of the textures
+ * @flrTexture: The var holding the texture for the floor
+ * @clngTexture: The var holding the texture for the ceiling
+ */
+
+void renderFlrClng(State *state, Player *player, int texWidth,
+		int texHeight, SDL_Texture **flrTexture,
+		SDL_Texture **clngTexture)
 {
 	double rayDirX0 = player->dir.x - player->plane.x;
 	double rayDirY0 = player->dir.y - player->plane.y;
