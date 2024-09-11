@@ -26,215 +26,212 @@ const uint8_t MAP[MAP_SIZE * MAP_SIZE] = {
 const float playerFOV = (PI / 2.0f);
 const float maxDepth = 20.0f;
 
-typedef enum
-{
-    NorthSouth,
-    EastWest
-} Side;
-
 int xy2index(int x, int y, int w)
 {
     return y * w + x;
 }
 
 SDL_Texture *wallTexture = NULL;
-SDL_Texture *floorTexture = NULL;
-SDL_Texture *ceilingTexture = NULL;
+SDL_Texture *flrTexture = NULL;
+SDL_Texture *clngTexture = NULL;
 
-void render(State *state, Player *player)
-{
-    /* black sky */
-    SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 0);
-    SDL_Rect ceilingRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
-    SDL_RenderFillRect(state->renderer, &ceilingRect);
+int texWidth = 16;
+int texHeight = 16;
 
-    /* black floor */
-    // SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 0);
-    // SDL_Rect floorRect = {0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
-    // SDL_RenderFillRect(state->renderer, &floorRect);
+// void render(State *state, Player *player)
+// {
+//     // /* black sky */
+//     // SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 0);
+//     // SDL_Rect ceilingRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
+//     // SDL_RenderFillRect(state->renderer, &ceilingRect);
 
-    for (int y = SCREEN_HEIGHT / 2 + 1; y < SCREEN_HEIGHT; ++y)
-    {
-        int texWidth = 16;
-        int texHeight = 16;
-        // Floor and ceiling casting algorithm similar to what you provided
-        double rayDirX0 = player->dir.x - player->plane.x;
-        double rayDirY0 = player->dir.y - player->plane.y;
-        double rayDirX1 = player->dir.x + player->plane.x;
-        double rayDirY1 = player->dir.y + player->plane.y;
+//     /* black floor */
+//     // SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 0);
+//     // SDL_Rect floorRect = {0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
+//     // SDL_RenderFillRect(state->renderer, &floorRect);
 
-        int p = y - SCREEN_HEIGHT / 2;
-        double posZ = 0.5 * SCREEN_HEIGHT;
-        double rowDistance = posZ / p;
+//     // For usage in the rendering floor and ceiling loop
+//     double rayDirX0 = player->dir.x - player->plane.x;
+//     double rayDirY0 = player->dir.y - player->plane.y;
+//     double rayDirX1 = player->dir.x + player->plane.x;
+//     double rayDirY1 = player->dir.y + player->plane.y;
+//     double posZ = 0.5 * SCREEN_HEIGHT;
+//     for (int y = SCREEN_HEIGHT / 2 + 1; y < SCREEN_HEIGHT; ++y)
+//     {
+//         // Floor and ceiling casting algorithm similar to what you provided
 
-        double floorStepX = rowDistance * (rayDirX1 - rayDirX0) / SCREEN_WIDTH;
-        double floorStepY = rowDistance * (rayDirY1 - rayDirY0) / SCREEN_WIDTH;
+//         int p = y - SCREEN_HEIGHT / 2;
 
-        double floorX = player->pos.x + rowDistance * rayDirX0;
-        double floorY = player->pos.y + rowDistance * rayDirY0;
+//         double rowDistance = posZ / p;
 
-        for (int x = 0; x < SCREEN_WIDTH; ++x)
-        {
-            // Floor and ceiling texture coordinates
-            int cellX = (int)(floorX);
-            int cellY = (int)(floorY);
+//         double floorStepX = rowDistance * (rayDirX1 - rayDirX0) / SCREEN_WIDTH;
+//         double floorStepY = rowDistance * (rayDirY1 - rayDirY0) / SCREEN_WIDTH;
 
-            int tx = (int)(texWidth * (floorX - cellX)) & (texWidth - 1);
-            int ty = (int)(texHeight * (floorY - cellY)) & (texHeight - 1);
+//         double floorX = player->pos.x + rowDistance * rayDirX0;
+//         double floorY = player->pos.y + rowDistance * rayDirY0;
 
-            floorX += floorStepX;
-            floorY += floorStepY;
+//         for (int x = 0; x < SCREEN_WIDTH; ++x)
+//         {
+//             // Floor and ceiling texture coordinates
+//             int cellX = (int)(floorX);
+//             int cellY = (int)(floorY);
 
-            SDL_Rect srcRect = {tx, ty, 1, 1};
-            SDL_Rect dstRectFloor = {x, y, 1, 1};
-            SDL_Rect dstRectCeiling = {x, SCREEN_HEIGHT - y - 1, 1, 1};
+//             int tx = (int)(texWidth * (floorX - cellX)) & (texWidth - 1);
+//             int ty = (int)(texHeight * (floorY - cellY)) & (texHeight - 1);
 
-            SDL_RenderCopy(state->renderer, floorTexture, &srcRect, &dstRectFloor);
-            SDL_RenderCopy(state->renderer, ceilingTexture, &srcRect, &dstRectCeiling);
-        }
-    }
+//             floorX += floorStepX;
+//             floorY += floorStepY;
 
-    // loop through each vertical strip of the screen
-    for (int x = 0; x < SCREEN_WIDTH; ++x)
-    {
-        // the left side of the screen is -1, center is 0 and left is 1
-        float cameraX = 2 * x / (float)SCREEN_WIDTH - 1;
-        // direction of the ray being cast
-        floatVector rayDir = {
-            .x = player->dir.x + player->plane.x * cameraX,
-            .y = player->dir.y + player->plane.y * cameraX,
-        };
+//             SDL_Rect srcRect = {tx, ty, 1, 1};
+//             SDL_Rect dstRectFloor = {x, y, 1, 1};
+//             SDL_Rect dstRectCeiling = {x, SCREEN_HEIGHT - y - 1, 1, 1};
 
-        // current position on the map squares
-        // the ray position is more accurate
-        IntVector mapBox = {
-            .x = (int)player->pos.x,
-            .y = (int)player->pos.y};
+//             SDL_RenderCopy(state->renderer, floorTexture, &srcRect, &dstRectFloor);
+//             SDL_RenderCopy(state->renderer, ceilingTexture, &srcRect, &dstRectCeiling);
+//         }
+//     }
 
-        // distance the ray travels from start position to the next x/y-side
-        floatVector sideDist = {0.0, 0.0};
+//     // loop through each vertical strip of the screen
+//     for (int x = 0; x < SCREEN_WIDTH; ++x)
+//     {
+//         // the left side of the screen is -1, center is 0 and left is 1
+//         float cameraX = 2 * x / (float)SCREEN_WIDTH - 1;
+//         // direction of the ray being cast
+//         floatVector rayDir = {
+//             .x = player->dir.x + player->plane.x * cameraX,
+//             .y = player->dir.y + player->plane.y * cameraX,
+//         };
 
-        // ditance traveled from current x/y-side to the next
-        floatVector deltaDist = {
-            .x = (rayDir.x == 0) ? 1e30 : fabsf(1 / rayDir.x), // the 1e30 is to avoid dividing by zero and getting infinite
-            .y = (rayDir.y == 0) ? 1e30 : fabsf(1 / rayDir.y),
-        };
+//         // current position on the map squares
+//         // the ray position is more accurate
+//         IntVector mapBox = {
+//             .x = (int)player->pos.x,
+//             .y = (int)player->pos.y};
 
-        // will be used to calculate the length of the ray
-        float perpWallDist;
+//         // distance the ray travels from start position to the next x/y-side
+//         floatVector sideDist = {0.0, 0.0};
 
-        // What direction to step in x- or y-direction (either +1 or -1)
-        IntVector stepDir = {0, 0};
+//         // ditance traveled from current x/y-side to the next
+//         floatVector deltaDist = {
+//             .x = (rayDir.x == 0) ? 1e30 : fabsf(1 / rayDir.x), // the 1e30 is to avoid dividing by zero and getting infinite
+//             .y = (rayDir.y == 0) ? 1e30 : fabsf(1 / rayDir.y),
+//         };
 
-        bool hit = false; // was there a wall hit
-        Side side;        // whether a northsouth/y side or a eastwest/x side was hit
+//         // will be used to calculate the length of the ray
+//         float perpWallDist;
 
-        // if the ray dirx is negative
-        if (rayDir.x < 0)
-        {
-            stepDir.x = -1;
-            sideDist.x = (player->pos.x - mapBox.x) * deltaDist.x;
-        }
-        else
-        {
-            stepDir.x = 1;
-            sideDist.x = (mapBox.x + 1.0f - player->pos.x) * deltaDist.x;
-        }
+//         // What direction to step in x- or y-direction (either +1 or -1)
+//         IntVector stepDir = {0, 0};
 
-        if (rayDir.y < 0)
-        {
-            stepDir.y = -1;
-            sideDist.y = (player->pos.y - mapBox.y) * deltaDist.y;
-        }
-        else
-        {
-            stepDir.y = 1;
-            sideDist.y = (mapBox.y + 1.0f - player->pos.y) * deltaDist.y;
-        }
+//         bool hit = false; // was there a wall hit
+//         Side side;        // whether a northsouth/y side or a eastwest/x side was hit
 
-        // start dda
-        while (!hit)
-        {
-            // jump to next map square
-            if (sideDist.x < sideDist.y)
-            {
-                sideDist.x += deltaDist.x;
-                mapBox.x += stepDir.x;
-                side = EastWest; // 0
-            }
-            else
-            {
-                sideDist.y += deltaDist.y;
-                mapBox.y += stepDir.y;
-                side = NorthSouth; // 1
-            }
-            // check if ray has hit a wall
-            if (MAP[xy2index(mapBox.x, mapBox.y, MAP_SIZE)] > 0)
-            {
-                hit = true;
-            }
-        }
+//         // if the ray dirx is negative
+//         if (rayDir.x < 0)
+//         {
+//             stepDir.x = -1;
+//             sideDist.x = (player->pos.x - mapBox.x) * deltaDist.x;
+//         }
+//         else
+//         {
+//             stepDir.x = 1;
+//             sideDist.x = (mapBox.x + 1.0f - player->pos.x) * deltaDist.x;
+//         }
 
-        // Calculate the distance projected on camera direction
-        if (side == EastWest)
-        {
-            perpWallDist = (sideDist.x - deltaDist.x);
-        }
-        else
-        {
-            perpWallDist = (sideDist.y - deltaDist.y);
-        }
+//         if (rayDir.y < 0)
+//         {
+//             stepDir.y = -1;
+//             sideDist.y = (player->pos.y - mapBox.y) * deltaDist.y;
+//         }
+//         else
+//         {
+//             stepDir.y = 1;
+//             sideDist.y = (mapBox.y + 1.0f - player->pos.y) * deltaDist.y;
+//         }
 
-        // Calculate height of line to draw on screen
-        int lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
+//         // start dda
+//         while (!hit)
+//         {
+//             // jump to next map square
+//             if (sideDist.x < sideDist.y)
+//             {
+//                 sideDist.x += deltaDist.x;
+//                 mapBox.x += stepDir.x;
+//                 side = EastWest; // 0
+//             }
+//             else
+//             {
+//                 sideDist.y += deltaDist.y;
+//                 mapBox.y += stepDir.y;
+//                 side = NorthSouth; // 1
+//             }
+//             // check if ray has hit a wall
+//             if (MAP[xy2index(mapBox.x, mapBox.y, MAP_SIZE)] > 0)
+//             {
+//                 hit = true;
+//             }
+//         }
 
-        // calculate lowest and highest pixel to fill in current stripe
-        int drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2;
-        if (drawStart < 0)
-            drawStart = 0;
-        int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
-        if (drawEnd >= SCREEN_HEIGHT)
-            drawEnd = SCREEN_HEIGHT;
+//         // Calculate the distance projected on camera direction
+//         if (side == EastWest)
+//         {
+//             perpWallDist = (sideDist.x - deltaDist.x);
+//         }
+//         else
+//         {
+//             perpWallDist = (sideDist.y - deltaDist.y);
+//         }
 
-        // Calculate texture coordinates
-        float wallX; // where the wall was hit
-        if (side == EastWest)
-        {
-            wallX = player->pos.y + perpWallDist * rayDir.y;
-        }
-        else
-        {
-            wallX = player->pos.x + perpWallDist * rayDir.x;
-        }
+//         // Calculate height of line to draw on screen
+//         int lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
 
-        int TEXTURE_WIDTH = 32;
-        int TEXTURE_HEIGHT = 32;
+//         // calculate lowest and highest pixel to fill in current stripe
+//         int drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2;
+//         if (drawStart < 0)
+//             drawStart = 0;
+//         int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
+//         if (drawEnd >= SCREEN_HEIGHT)
+//             drawEnd = SCREEN_HEIGHT;
 
-        wallX -= floorf(wallX);                         // calculate the exact position within the texture
-        int texX = (int)(wallX * (float)TEXTURE_WIDTH); // texture width
+//         // Calculate texture coordinates
+//         float wallX; // where the wall was hit
+//         if (side == EastWest)
+//         {
+//             wallX = player->pos.y + perpWallDist * rayDir.y;
+//         }
+//         else
+//         {
+//             wallX = player->pos.x + perpWallDist * rayDir.x;
+//         }
 
-        if (side == EastWest && rayDir.x > 0)
-            texX = TEXTURE_WIDTH - texX - 1;
-        if (side == NorthSouth && rayDir.y < 0)
-            texX = TEXTURE_WIDTH - texX - 1;
+//         int TEXTURE_WIDTH = 32;
+//         int TEXTURE_HEIGHT = 32;
 
-        // Darken texture if wall is on NorthSouth side
-        Uint8 r = 255, g = 255, b = 255;
-        if (side == NorthSouth)
-        {
-            r = 160;
-            g = 160;
-            b = 160;
-        }
+//         wallX -= floorf(wallX);                         // calculate the exact position within the texture
+//         int texX = (int)(wallX * (float)TEXTURE_WIDTH); // texture width
 
-        SDL_SetTextureColorMod(wallTexture, r, g, b);
+//         if (side == EastWest && rayDir.x > 0)
+//             texX = TEXTURE_WIDTH - texX - 1;
+//         if (side == NorthSouth && rayDir.y < 0)
+//             texX = TEXTURE_WIDTH - texX - 1;
 
-        // Draw textured wall
-        SDL_Rect srcRect = {texX, 0, 1, TEXTURE_HEIGHT};   // texture coordinates
-        SDL_Rect destRect = {x, drawStart, 1, lineHeight}; // screen coordinates
-        SDL_RenderCopy(state->renderer, wallTexture, &srcRect, &destRect);
-    }
-}
+//         // Darken texture if wall is on NorthSouth side
+//         Uint8 r = 255, g = 255, b = 255;
+//         if (side == NorthSouth)
+//         {
+//             r = 160;
+//             g = 160;
+//             b = 160;
+//         }
+
+//         SDL_SetTextureColorMod(wallTexture, r, g, b);
+
+//         // Draw textured wall
+//         SDL_Rect srcRect = {texX, 0, 1, TEXTURE_HEIGHT};   // texture coordinates
+//         SDL_Rect destRect = {x, drawStart, 1, lineHeight}; // screen coordinates
+//         SDL_RenderCopy(state->renderer, wallTexture, &srcRect, &destRect);
+//     }
+// }
 
 int main(int argc, char *argv[])
 {
@@ -274,9 +271,9 @@ int main(int argc, char *argv[])
            "failed to create SDL renderer: %s\n",
            SDL_GetError());
 
-    loadTextures(&state, &floorTexture, "textures/bronze_plank.png");
+    loadTextures(&state, &flrTexture, "textures/bronze_plank.png");
     loadTextures(&state, &wallTexture, "textures/wall_bricks_old_32.png");
-    loadTextures(&state, &ceilingTexture, "textures/bronze_plank.png");
+    loadTextures(&state, &clngTexture, "textures/bronze_plank.png");
     SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1");
     SDL_SetRelativeMouseMode(true);
 
@@ -426,7 +423,8 @@ int main(int argc, char *argv[])
         }
 
         SDL_RenderClear(state.renderer);
-        render(&state, &player);
+        renderFlrClng(&state, &player, texWidth, texHeight, &flrTexture, &clngTexture);
+        renderWall(&state, &player, texWidth, texHeight, &wallTexture);
         if (state.raining)
         {
             renderRain(&state);
