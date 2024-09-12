@@ -8,7 +8,7 @@ CFLAGS = -Wall -Werror -Wextra -pedantic
 SDLFLAGS = `sdl2-config --cflags --libs` -lSDL2_image
 
 #files to compile
-SRC = src/main.c src/load_textures.c src/rain.c src/get_map.c src/render.c
+SRC = src/main.c src/load_textures.c src/rain.c src/get_map.c src/render.c src/weapons.c
 
 #math flags
 MATHFLAGS = -lm
