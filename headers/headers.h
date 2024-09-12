@@ -18,8 +18,8 @@
 #include <errno.h>
 
 /* global variables */
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
 #define PI 3.14159265f
 extern uint8_t *MAP;
 extern int MAP_SIZE;

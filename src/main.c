@@ -34,9 +34,6 @@ SDL_Texture *clngTexture = NULL;
 SDL_Texture *weaponTexture = NULL;
 SDL_Texture *weaponShotTexture = NULL;
 
-int texWidth = 16;
-int texHeight = 16;
-
 int main(int argc, char *argv[])
 {
 	ASSERT((argc == 2), "Usage: %s <map_file_path>\n", argv[0]);
@@ -71,9 +68,9 @@ int main(int argc, char *argv[])
 	ASSERT(state.renderer,
 			"failed to create SDL renderer: %s\n",
 			SDL_GetError());
-	loadTextures(&state, &flrTexture, "textures/bronze_plank.png");
+	loadTextures(&state, &flrTexture, "textures/Ground.png");
 	loadTextures(&state, &wallTexture, "textures/wall_bricks_old_32.png");
-	loadTextures(&state, &clngTexture, "textures/bronze_plank.png");
+	loadTextures(&state, &clngTexture, "textures/sky.png");
 	loadTextures(&state, &weaponShotTexture, "textures/gun_shot.png");
 	loadTextures(&state, &weaponTexture, "textures/gun.png");
 	SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1");
@@ -216,8 +213,8 @@ int main(int argc, char *argv[])
 			}
 		}
 		SDL_RenderClear(state.renderer);
-		renderFlrClng(&state, &player, texWidth, texHeight, &flrTexture, &clngTexture);
-		renderWall(&state, &player, texWidth, texHeight, &wallTexture);
+		renderFlrClng(&state, &player, 32, 32, &flrTexture, &clngTexture);
+		renderWall(&state, &player, 32, 32, &wallTexture);
 		if (state.raining)
 		{
 			renderRain(&state);
