@@ -4,6 +4,7 @@
 
 a {
     text-decoration: none;
+    color:#70a081
 }
 
 /* body */
@@ -45,17 +46,23 @@ body {
     font-size: 22px;
 }
 
+nav {
+    background-color: #85bc99;
+}
+
 .nav-item {
     margin: 0 30px 0 30px;
 }
 
-.nav-item .nav-link , footer a{
+.nav-item .nav-link,
+footer a {
     position: relative;
     padding-left: 20px;
     transition: color 0.3s ease;
 }
 
-.nav-item .nav-link::before, footer a::before {
+.nav-item .nav-link::before,
+footer a::before {
     content: '';
     position: absolute;
     left: -10px;
@@ -65,7 +72,8 @@ body {
     transition: opacity 0.1s ease;
 }
 
-.nav-item:hover .nav-link, footer a:hover {
+.nav-item:hover .nav-link,
+footer a:hover {
     color: #025939;
 }
 
@@ -88,13 +96,17 @@ footer a:hover::before {
 #hero {
     /*TODO fix height on mobile*/
     height: 35em;
-    background-image: url("../img/hero-placeholder");
+    background-image: url("../img/cover.png");
     background-repeat: no-repeat;
     background-size: cover;
+    background-position: center;
 }
 
 #hero-text {
-    margin-top: 13em;
+    background-color: #c1d7c985;
+    width: 45em;
+    margin-top: 5em;
+    padding: 5em 0 5em 0;
 }
 
 #hero-text h1 {
@@ -158,17 +170,38 @@ footer a:hover::before {
     margin-bottom: 8em;
 }
 
+.card-body {
+    height: 17.1em;
+}
+.card-text {
+    height: 7.7em;
+}
+#about-container .links ul {
+    list-style: none;
+}
+
+#about-container .links ul li {
+    display: inline-block;
+    font-size: 2em;
+
+}
+
+#about-container .links ul li i {
+    color: #85bc99;
+}
+
 /* end of about section */
 
 /* footer section */
 footer {
     height: 5em;
     padding-top: 2em;
-    background-color: rgb(3 166 60 / 29%);
+    background-color: #85bc99;
 }
-footer a
-{
+
+footer a {
     color: black;
     font-size: 1.2em;
 }
+
 /* end of footer section */
