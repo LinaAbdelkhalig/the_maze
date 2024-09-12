@@ -23,6 +23,8 @@
 #define PI 3.14159265f
 extern uint8_t *MAP;
 extern int MAP_SIZE;
+extern SDL_Texture *weaponTexture;
+extern SDL_Texture *weaponShotTexture;
 
 /* Structs */
 /**
@@ -110,6 +112,7 @@ void renderFlrClng(State *state, Player *player, int texWidth,
 void renderWall(State *state, Player *player, int texWidth,
 		int texHeight, SDL_Texture **wallTexture);
 void renderRain(State *state);
+void renderWeapon(State *state, bool isKilling);
 void getMap(const char *fp);
 int xy2index(int x, int y, int w);
 
