@@ -31,6 +31,8 @@ int xy2index(int x, int y, int w)
 SDL_Texture *wallTexture = NULL;
 SDL_Texture *flrTexture = NULL;
 SDL_Texture *clngTexture = NULL;
+SDL_Texture *weaponTexture = NULL;
+SDL_Texture *weaponShotTexture = NULL;
 
 int texWidth = 16;
 int texHeight = 16;
@@ -72,6 +74,8 @@ int main(int argc, char *argv[])
 	loadTextures(&state, &flrTexture, "textures/bronze_plank.png");
 	loadTextures(&state, &wallTexture, "textures/wall_bricks_old_32.png");
 	loadTextures(&state, &clngTexture, "textures/bronze_plank.png");
+	loadTextures(&state, &weaponShotTexture, "textures/gun_shot.png");
+	loadTextures(&state, &weaponTexture, "textures/gun.png");
 	SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1");
 	SDL_SetRelativeMouseMode(true);
 	Player player = {
@@ -80,7 +84,7 @@ int main(int argc, char *argv[])
 		.plane = {.x = 0.0f, .y = 0.66f},
 	};
 	const float rotateSpeed = 0.025, moveSpeed = 0.05;
-
+	bool isKilling = false;
 	while (state.running)
 	{
 		SDL_Event event;
@@ -92,8 +96,18 @@ int main(int argc, char *argv[])
 				case SDL_QUIT:
 					state.running = false;
 					break;
+				case SDL_KEYDOWN:
+					if (event.key.keysym.sym == SDLK_SPACE)
+						isKilling = true;
+					break;
+				case SDL_KEYUP:
+					if (event.key.keysym.sym == SDLK_SPACE)
+						isKilling = false;
+					break;
 				case SDL_MOUSEMOTION:
 					mouse_xrel = event.motion.xrel;
+					break;
+				default:
 					break;
 			}
 		}
@@ -106,6 +120,7 @@ int main(int argc, char *argv[])
 			float rotSpeed = rotateSpeed * (mouse_xrel * -0.1);
 			// both camera direction and camera plane must be rotated
 			floatVector oldDir = player.dir;
+
 			player.dir.x = player.dir.x * cosf(rotSpeed) - player.dir.y * sinf(rotSpeed);
 			player.dir.y = oldDir.x * sinf(rotSpeed) + player.dir.y * cosf(rotSpeed);
 			floatVector oldPlane = player.plane;
@@ -207,8 +222,13 @@ int main(int argc, char *argv[])
 		{
 			renderRain(&state);
 		}
+		renderWeapon(&state, isKilling);
 		SDL_RenderPresent(state.renderer);
 	}
+	SDL_DestroyTexture(weaponTexture);
+	SDL_DestroyTexture(weaponShotTexture);
+	SDL_DestroyTexture(flrTexture);
+	SDL_DestroyTexture(clngTexture);
 	SDL_DestroyTexture(wallTexture);
 	SDL_DestroyRenderer(state.renderer);
 	SDL_DestroyWindow(state.window);
