@@ -1,4 +1,43 @@
 #include "../headers/headers.h"
+/**
+ * renderCeiling - renders the ceiling texture
+ * @state: The struct holding the window and renderer
+ * @player: The struct holding the players position information
+ * @texWidth: Width of the texture
+ * @texHeight: The height of the textures
+ * @clngTexture: The var holding the texture for the ceiling
+ */
+
+void renderCeiling(State *state, Player *player, int texWidth, int texHeight, SDL_Texture **clngTexture)
+{
+	
+	double rayDirX0 = player->dir.x - player->plane.x;
+	double rayDirY0 = player->dir.y - player->plane.y;
+	double rayDirX1 = player->dir.x + player->plane.x;
+	double rayDirY1 = player->dir.y + player->plane.y;
+	double posZ = 0.5 * SCREEN_HEIGHT;
+	for (int y = SCREEN_HEIGHT / 2 + 1; y < SCREEN_HEIGHT; ++y)
+	{
+		int p = y - SCREEN_HEIGHT / 2;
+		double rowDistance = posZ / p;
+		double floorStepX = rowDistance * (rayDirX1 - rayDirX0) / SCREEN_WIDTH;
+		double floorStepY = rowDistance * (rayDirY1 - rayDirY0) / SCREEN_WIDTH;
+		double floorX = player->pos.x + rowDistance * rayDirX0;
+		double floorY = player->pos.y + rowDistance * rayDirY0;
+		for (int x = 0; x < SCREEN_WIDTH; ++x)
+		{
+			int cellX = (int)(floorX);
+			int cellY = (int)(floorY);
+			int tx = (int)(texWidth * (floorX - cellX)) & (texWidth - 1);
+			int ty = (int)(texHeight * (floorY - cellY)) & (texHeight - 1);
+			floorX += floorStepX;
+			floorY += floorStepY;
+			SDL_Rect srcRect = {tx, ty, 1, 1};
+			SDL_Rect dstRectCeiling = {x, SCREEN_HEIGHT - y - 1, 1, 1};
+			SDL_RenderCopy(state->renderer, *clngTexture, &srcRect, &dstRectCeiling);
+		}
+	}
+}
 
 /**
  * renderFlrClng - Renders the textures for the ceiling and floor
@@ -11,9 +50,8 @@
  * @clngTexture: The var holding the texture for the ceiling
  */
 
-void renderFlrClng(State *state, Player *player, int texWidth,
-		int texHeight, SDL_Texture **flrTexture,
-		SDL_Texture **clngTexture)
+void renderFloor(State *state, Player *player, int texWidth,
+		int texHeight, SDL_Texture **flrTexture)
 {
 	double rayDirX0 = player->dir.x - player->plane.x;
 	double rayDirY0 = player->dir.y - player->plane.y;
@@ -38,9 +76,7 @@ void renderFlrClng(State *state, Player *player, int texWidth,
 			floorY += floorStepY;
 			SDL_Rect srcRect = {tx, ty, 1, 1};
 			SDL_Rect dstRectFloor = {x, y, 1, 1};
-			SDL_Rect dstRectCeiling = {x, SCREEN_HEIGHT - y - 1, 1, 1};
 			SDL_RenderCopy(state->renderer, *flrTexture, &srcRect, &dstRectFloor);
-			SDL_RenderCopy(state->renderer, *clngTexture, &srcRect, &dstRectCeiling);
 		}
 	}
 }

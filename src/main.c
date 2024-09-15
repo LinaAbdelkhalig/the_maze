@@ -54,12 +54,12 @@ int main(int argc, char *argv[])
 		.raining = 0,
 	};
 	state.window =
-		SDL_CreateWindow("Raycast",
+		SDL_CreateWindow("The Maze",
 				SDL_WINDOWPOS_CENTERED_DISPLAY(0),
 				SDL_WINDOWPOS_CENTERED_DISPLAY(0),
 				SCREEN_WIDTH,
 				SCREEN_HEIGHT,
-				SDL_WINDOW_ALLOW_HIGHDPI);
+				SDL_WINDOW_SHOWN);
 	ASSERT(state.window,
 			"failed to create SDL window: %s\n",
 			SDL_GetError());
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 	ASSERT(state.renderer,
 			"failed to create SDL renderer: %s\n",
 			SDL_GetError());
-	loadTextures(&state, &flrTexture, "textures/Ground.png");
+	loadTextures(&state, &flrTexture, "textures/floor_desert.png");
 	loadTextures(&state, &wallTexture, "textures/wall_bricks_old_32.png");
 	loadTextures(&state, &clngTexture, "textures/sky.png");
 	loadTextures(&state, &weaponShotTexture, "textures/gun_shot.png");
@@ -213,7 +213,8 @@ int main(int argc, char *argv[])
 			}
 		}
 		SDL_RenderClear(state.renderer);
-		renderFlrClng(&state, &player, 32, 32, &flrTexture, &clngTexture);
+		renderFloor(&state, &player, 64, 64, &flrTexture);
+		renderCeiling(&state, &player, 64, 64, &clngTexture);
 		renderWall(&state, &player, 32, 32, &wallTexture);
 		if (state.raining)
 		{

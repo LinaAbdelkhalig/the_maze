@@ -18,8 +18,8 @@
 #include <errno.h>
 
 /* global variables */
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 480
 #define PI 3.14159265f
 extern uint8_t *MAP;
 extern int MAP_SIZE;
@@ -106,9 +106,9 @@ typedef enum Side
 
 /* Function declarations */
 void loadTextures(State *state, SDL_Texture **texture, const char *path);
-void renderFlrClng(State *state, Player *player, int texWidth,
-		int texHeight, SDL_Texture **flrTexture,
-		SDL_Texture **clngTexture);
+void renderCeiling(State *state, Player *player, int texWidth, int texHeight, SDL_Texture **clngTexture);
+void renderFloor(State *state, Player *player, int texWidth,
+		int texHeight, SDL_Texture **flrTexture);
 void renderWall(State *state, Player *player, int texWidth,
 		int texHeight, SDL_Texture **wallTexture);
 void renderRain(State *state);
