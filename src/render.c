@@ -10,34 +10,56 @@
 
 void renderCeiling(State *state, Player *player, int texWidth, int texHeight, SDL_Texture **clngTexture)
 {
-	
 	double rayDirX0 = player->dir.x - player->plane.x;
 	double rayDirY0 = player->dir.y - player->plane.y;
 	double rayDirX1 = player->dir.x + player->plane.x;
 	double rayDirY1 = player->dir.y + player->plane.y;
 	double posZ = 0.5 * SCREEN_HEIGHT;
+
+	// Pre-create SDL_Rect objects
+	SDL_Rect srcRect = {0, 0, 1, 1};
+	SDL_Rect dstRectCeiling = {0, 0, 1, 1};
+
+	// Loop through rows (upper half of the screen)
 	for (int y = SCREEN_HEIGHT / 2 + 1; y < SCREEN_HEIGHT; ++y)
 	{
 		int p = y - SCREEN_HEIGHT / 2;
 		double rowDistance = posZ / p;
+
+		// Precompute steps for this row
 		double floorStepX = rowDistance * (rayDirX1 - rayDirX0) / SCREEN_WIDTH;
 		double floorStepY = rowDistance * (rayDirY1 - rayDirY0) / SCREEN_WIDTH;
+
+		// Initial floor positions
 		double floorX = player->pos.x + rowDistance * rayDirX0;
 		double floorY = player->pos.y + rowDistance * rayDirY0;
+
+		dstRectCeiling.y = SCREEN_HEIGHT - y - 1;  // Adjust for ceiling
+
+		// Loop through each column (pixels on the row)
 		for (int x = 0; x < SCREEN_WIDTH; ++x)
 		{
+			// Calculate texture coordinates
 			int cellX = (int)(floorX);
 			int cellY = (int)(floorY);
 			int tx = (int)(texWidth * (floorX - cellX)) & (texWidth - 1);
 			int ty = (int)(texHeight * (floorY - cellY)) & (texHeight - 1);
+
+			// Set texture source and destination positions
+			srcRect.x = tx;
+			srcRect.y = ty;
+			dstRectCeiling.x = x;
+
+			// Render ceiling pixel
+			SDL_RenderCopy(state->renderer, *clngTexture, &srcRect, &dstRectCeiling);
+
+			// Update floor position for the next pixel
 			floorX += floorStepX;
 			floorY += floorStepY;
-			SDL_Rect srcRect = {tx, ty, 1, 1};
-			SDL_Rect dstRectCeiling = {x, SCREEN_HEIGHT - y - 1, 1, 1};
-			SDL_RenderCopy(state->renderer, *clngTexture, &srcRect, &dstRectCeiling);
 		}
 	}
 }
+
 
 /**
  * renderFlrClng - Renders the textures for the ceiling and floor
@@ -58,28 +80,51 @@ void renderFloor(State *state, Player *player, int texWidth,
 	double rayDirX1 = player->dir.x + player->plane.x;
 	double rayDirY1 = player->dir.y + player->plane.y;
 	double posZ = 0.5 * SCREEN_HEIGHT;
+
+	// Create rectangles outside the loop
+	SDL_Rect srcRect = {0, 0, 1, 1};
+	SDL_Rect dstRectFloor = {0, 0, 1, 1};
+
+	// Loop through the screen rows (only lower half)
 	for (int y = SCREEN_HEIGHT / 2 + 1; y < SCREEN_HEIGHT; ++y)
 	{
 		int p = y - SCREEN_HEIGHT / 2;
 		double rowDistance = posZ / p;
+
+		// Precompute steps for this row
 		double floorStepX = rowDistance * (rayDirX1 - rayDirX0) / SCREEN_WIDTH;
 		double floorStepY = rowDistance * (rayDirY1 - rayDirY0) / SCREEN_WIDTH;
+
+		// Initial floor positions
 		double floorX = player->pos.x + rowDistance * rayDirX0;
 		double floorY = player->pos.y + rowDistance * rayDirY0;
+
+		dstRectFloor.y = y;  // Set row for destination
+
+		// Loop through each column (pixels on the row)
 		for (int x = 0; x < SCREEN_WIDTH; ++x)
 		{
+			// Calculate texture coordinates
 			int cellX = (int)(floorX);
 			int cellY = (int)(floorY);
 			int tx = (int)(texWidth * (floorX - cellX)) & (texWidth - 1);
 			int ty = (int)(texHeight * (floorY - cellY)) & (texHeight - 1);
+
+			// Set texture source and destination positions
+			srcRect.x = tx;
+			srcRect.y = ty;
+			dstRectFloor.x = x;
+
+			// Render floor pixel
+			SDL_RenderCopy(state->renderer, *flrTexture, &srcRect, &dstRectFloor);
+
+			// Update floor position for next pixel
 			floorX += floorStepX;
 			floorY += floorStepY;
-			SDL_Rect srcRect = {tx, ty, 1, 1};
-			SDL_Rect dstRectFloor = {x, y, 1, 1};
-			SDL_RenderCopy(state->renderer, *flrTexture, &srcRect, &dstRectFloor);
 		}
 	}
 }
+
 
 void renderWall(State *state, Player *player, int texWidth, int texHeight, SDL_Texture **wallTexture)
 {
