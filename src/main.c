@@ -23,9 +23,36 @@ const uint8_t MAP[MAP_SIZE * MAP_SIZE] = {
 const float playerFOV = (PI / 2.0f);
 const float maxDepth = 20.0f;
 
+/* sound files */
+Mix_Chunk *walkSFX = NULL;
+Mix_Chunk *rainSFX = NULL;
+
 int xy2index(int x, int y, int w)
 {
 	return (y * w + x);
+}
+
+void load_sfx()
+{
+	walkSFX = Mix_LoadWAV("sound/stepdirt_2.wav");
+	ASSERT(walkSFX, "Could not load walkSFX. Error: %s\n",
+			Mix_GetError());
+
+	rainSFX = Mix_LoadWAV("sound/rain_2.wav");
+	ASSERT(rainSFX, "Could not load rainSFX. Error: %s\n",
+                        Mix_GetError());
+}
+
+void clean_up(State *state)
+{
+	Mix_FreeChunk(walkSFX);
+	Mix_FreeChunk(rainSFX);
+	SDL_DestroyRenderer(state->renderer);
+	SDL_DestroyWindow(state->window);
+	Mix_CloseAudio();
+
+	Mix_Quit();
+	SDL_Quit();
 }
 
 SDL_Texture *wallTexture = NULL;
@@ -48,6 +75,16 @@ int main(int argc, char *argv[])
 		printf("Could not initialize SDL_image. Error:%s\n", IMG_GetError());
 		return (1);
 	}
+
+	/* initializing sdl_mixer for sfx */
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+	{
+		printf("could not initialize SDL_mixer. Error: %s\n",
+				Mix_GetError());
+	}
+
+	/* loading the sfx */
+	load_sfx();
 
 	State state = {
 		.running = true,
@@ -80,7 +117,7 @@ int main(int argc, char *argv[])
 		.dir = {.x = -1.0f, .y = 0.0f},
 		.plane = {.x = 0.0f, .y = 0.66f},
 	};
-	const float rotateSpeed = 0.025, moveSpeed = 0.05;
+	const float rotateSpeed = 0.1, moveSpeed = 0.15;
 	bool isKilling = false;
 	while (state.running)
 	{
@@ -133,6 +170,17 @@ int main(int argc, char *argv[])
 		if (keystate[SDL_SCANCODE_R])
 		{
 			state.raining = !state.raining;
+
+			/* play the rainSFX while it's raining */
+			if(state.raining)
+			{
+				Mix_PlayChannel(-1, rainSFX, -1);
+			}
+			else
+			{
+				/* stop the rsin sfx */
+				Mix_HaltChannel(-1);
+			}
 		}
 		if (keystate[SDL_SCANCODE_W] || keystate[SDL_SCANCODE_UP])
 		{ 
@@ -150,7 +198,7 @@ int main(int argc, char *argv[])
 			}
 		}
 		if (keystate[SDL_SCANCODE_S] || keystate[SDL_SCANCODE_DOWN])
-		{ // backwards
+		{ /* backwards */
 			if (MAP[xy2index(player.pos.x - deltaPos.x,
 						player.pos.y,
 						MAP_SIZE)] == 0)
