@@ -9,6 +9,7 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_scancode.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
