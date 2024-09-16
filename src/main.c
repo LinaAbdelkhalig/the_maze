@@ -28,6 +28,29 @@ Mix_Chunk *walkSFX = NULL;
 Mix_Chunk *rainSFX = NULL;
 Mix_Chunk *gunSFX = NULL;
 
+SDL_Texture *textureArray[3];
+
+void initializeTextures(SDL_Texture *textureArray[], State *state)
+{
+    for (int i = 0; i < 3; i++)
+    {
+        textureArray[i] = NULL;
+    }
+
+    loadTextures(state, &textureArray[0], "textures/floor_desert.png");
+    loadTextures(state, &textureArray[1], "textures/wall_bricks_old_32.png");
+    loadTextures(state, &textureArray[2], "textures/sky.png");
+    // loadTextures(state, &textureArray[3], "textures/gun_shot.png");
+    // loadTextures(state, &textureArray[4], "textures/gun.png");
+}
+
+/* textures */
+// SDL_Texture *wallTexture = NULL;
+// SDL_Texture *flrTexture = NULL;
+// SDL_Texture *clngTexture = NULL;
+SDL_Texture *weaponTexture = NULL;
+SDL_Texture *weaponShotTexture = NULL;
+
 int xy2index(int x, int y, int w)
 {
 	return (y * w + x);
@@ -48,47 +71,52 @@ void load_sfx()
                         Mix_GetError());
 }
 
-void clean_up(State *state)
+void init()
+{
+	ASSERT(!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO),
+			"SDL failed to initialize; %s\n",
+			SDL_GetError());
+
+	ASSERT((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG),
+			"Could not initialize SDL_image. Error: %s\n",
+			IMG_GetError());
+
+
+	/* initializing sdl_mixer for sfx */
+	ASSERT(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) >= 0,
+			"Could not initialize SDL_mixer. Error: %s\n",
+			Mix_GetError());
+
+}
+
+void clean_up(State *state, SDL_Texture *textureArray[])
 {
 	Mix_FreeChunk(walkSFX);
 	Mix_FreeChunk(rainSFX);
 	Mix_FreeChunk(gunSFX);
 
+	for(int i = 0; i < 3; i++)
+	{
+		SDL_DestroyTexture(textureArray[i]);
+	}
 	SDL_DestroyRenderer(state->renderer);
 	SDL_DestroyWindow(state->window);
 	Mix_CloseAudio();
 
+	IMG_Quit();
 	Mix_Quit();
 	SDL_Quit();
 }
 
-SDL_Texture *wallTexture = NULL;
-SDL_Texture *flrTexture = NULL;
-SDL_Texture *clngTexture = NULL;
-SDL_Texture *weaponTexture = NULL;
-SDL_Texture *weaponShotTexture = NULL;
 
 int main(int argc, char *argv[])
 {
 	ASSERT((argc == 2), "Usage: %s <map_file_path>\n", argv[0]);
 	/* load the map from the file */
 	getMap(argv[1]);
-	ASSERT(!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO),
-			"SDL failed to initialize; %s\n",
-			SDL_GetError());
 
-	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
-	{
-		printf("Could not initialize SDL_image. Error:%s\n", IMG_GetError());
-		return (1);
-	}
-
-	/* initializing sdl_mixer for sfx */
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
-	{
-		printf("could not initialize SDL_mixer. Error: %s\n",
-				Mix_GetError());
-	}
+	/* initialize sdl, sld_img, and sdl_mixer*/
+	init();
 
 	/* loading the sfx */
 	load_sfx();
@@ -97,6 +125,8 @@ int main(int argc, char *argv[])
 		.running = true,
 		.raining = 0,
 	};
+
+	/* create the window */
 	state.window =
 		SDL_CreateWindow("The Maze",
 				SDL_WINDOWPOS_CENTERED_DISPLAY(0),
@@ -107,16 +137,18 @@ int main(int argc, char *argv[])
 	ASSERT(state.window,
 			"failed to create SDL window: %s\n",
 			SDL_GetError());
+	
 	state.renderer = SDL_CreateRenderer(state.window, -1,
 			SDL_RENDERER_PRESENTVSYNC);
 	ASSERT(state.renderer,
 			"failed to create SDL renderer: %s\n",
 			SDL_GetError());
-	loadTextures(&state, &flrTexture, "textures/floor_desert.png");
-	loadTextures(&state, &wallTexture, "textures/wall_bricks_old_32.png");
-	loadTextures(&state, &clngTexture, "textures/sky.png");
+
+	/* set the textures to null and load them in the array*/
+	initializeTextures(textureArray, &state);
 	loadTextures(&state, &weaponShotTexture, "textures/gun_shot.png");
 	loadTextures(&state, &weaponTexture, "textures/gun.png");
+
 	SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1");
 	SDL_SetRelativeMouseMode(true);
 	Player player = {
@@ -126,6 +158,8 @@ int main(int argc, char *argv[])
 	};
 	const float rotateSpeed = 0.2, moveSpeed = 0.30;
 	bool isKilling = false;
+
+	/* the main loop */
 	while (state.running)
 	{
 		SDL_Event event;
@@ -271,9 +305,10 @@ int main(int argc, char *argv[])
 			Mix_PlayChannel(0, walkSFX, 0);
 		}
 		SDL_RenderClear(state.renderer);
-		renderFloor(&state, &player, 64, 64, &flrTexture);
-		renderCeiling(&state, &player, 64, 64, &clngTexture);
-		renderWall(&state, &player, 32, 32, &wallTexture);
+		renderFloor(&state, &player, 64, 64, &textureArray[0]);  // Floor texture
+		renderCeiling(&state, &player, 64, 64, &textureArray[2]);  // Ceiling texture
+		renderWall(&state, &player, 32, 32, &textureArray[1]);  // Wall texture
+
 		renderMiniMap(&state, &player, 150);
 		if (state.raining)
 		{
@@ -284,12 +319,9 @@ int main(int argc, char *argv[])
 	}
 	SDL_DestroyTexture(weaponTexture);
 	SDL_DestroyTexture(weaponShotTexture);
-	SDL_DestroyTexture(flrTexture);
-	SDL_DestroyTexture(clngTexture);
-	SDL_DestroyTexture(wallTexture);
-	SDL_DestroyRenderer(state.renderer);
-	SDL_DestroyWindow(state.window);
-	IMG_Quit();
-	SDL_Quit();
+	
+
+	clean_up(&state, textureArray);
+
 	return (0);
 }
