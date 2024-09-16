@@ -98,7 +98,7 @@ typedef enum Side
 /* Functions */
 #define ASSERT(cond, ...) \
 	do { \
-		if (!cond) \
+		if (!(cond)) \
 		{ \
 			fprintf(stderr, __VA_ARGS__); \
 			exit(1); \
