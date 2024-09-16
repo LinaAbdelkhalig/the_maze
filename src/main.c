@@ -259,6 +259,7 @@ int main(int argc, char *argv[])
 		renderFloor(&state, &player, 64, 64, &flrTexture);
 		renderCeiling(&state, &player, 64, 64, &clngTexture);
 		renderWall(&state, &player, 32, 32, &wallTexture);
+		renderMiniMap(&state, &player, 150);
 		if (state.raining)
 		{
 			renderRain(&state);
