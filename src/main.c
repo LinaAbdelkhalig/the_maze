@@ -26,6 +26,7 @@ const float maxDepth = 20.0f;
 /* sound files */
 Mix_Chunk *walkSFX = NULL;
 Mix_Chunk *rainSFX = NULL;
+Mix_Chunk *gunSFX = NULL;
 
 int xy2index(int x, int y, int w)
 {
@@ -34,12 +35,16 @@ int xy2index(int x, int y, int w)
 
 void load_sfx()
 {
-	walkSFX = Mix_LoadWAV("sound/stepdirt_2.wav");
+	walkSFX = Mix_LoadWAV("sound/stepsnow_1.wav");
 	ASSERT(walkSFX, "Could not load walkSFX. Error: %s\n",
 			Mix_GetError());
 
 	rainSFX = Mix_LoadWAV("sound/rain_2.wav");
 	ASSERT(rainSFX, "Could not load rainSFX. Error: %s\n",
+                        Mix_GetError());
+
+	gunSFX = Mix_LoadWAV("sound/gunshot_23.wav");
+	ASSERT(rainSFX, "Could not load gunSFX. Error: %s\n",
                         Mix_GetError());
 }
 
@@ -47,6 +52,8 @@ void clean_up(State *state)
 {
 	Mix_FreeChunk(walkSFX);
 	Mix_FreeChunk(rainSFX);
+	Mix_FreeChunk(gunSFX);
+
 	SDL_DestroyRenderer(state->renderer);
 	SDL_DestroyWindow(state->window);
 	Mix_CloseAudio();
@@ -117,7 +124,7 @@ int main(int argc, char *argv[])
 		.dir = {.x = -1.0f, .y = 0.0f},
 		.plane = {.x = 0.0f, .y = 0.66f},
 	};
-	const float rotateSpeed = 0.1, moveSpeed = 0.15;
+	const float rotateSpeed = 0.2, moveSpeed = 0.30;
 	bool isKilling = false;
 	while (state.running)
 	{
@@ -134,14 +141,18 @@ int main(int argc, char *argv[])
 					if (event.key.keysym.sym == SDLK_ESCAPE)
 						state.running = false;
 					if (event.key.keysym.sym == SDLK_SPACE)
+					{
 						isKilling = true;
+						Mix_PlayChannel(-1, gunSFX, 0);
+					}
+						
 					if (event.key.keysym.sym == SDLK_r)
 					{
 						state.raining = !state.raining;
 
 						/* play the rainSFX while it's raining */
 						if(state.raining)
-							Mix_PlayChannel(-1, rainSFX, -1);
+							Mix_PlayChannel(1, rainSFX, -1);
 						else
 							/* stop the rsin sfx */
 							Mix_HaltChannel(-1);
@@ -178,7 +189,7 @@ int main(int argc, char *argv[])
 			.y = player.dir.y * moveSpeed,
 		};
 		if (keystate[SDL_SCANCODE_W] || keystate[SDL_SCANCODE_UP])
-		{ 
+		{ /* move forward*/
 			if (MAP[xy2index(player.pos.x + deltaPos.x,
 						player.pos.y,
 						MAP_SIZE)] == 0)
@@ -191,6 +202,7 @@ int main(int argc, char *argv[])
 			{
 				player.pos.y += deltaPos.y;
 			}
+			Mix_PlayChannel(0, walkSFX, 0);
 		}
 		if (keystate[SDL_SCANCODE_S] || keystate[SDL_SCANCODE_DOWN])
 		{ /* backwards */
@@ -206,6 +218,7 @@ int main(int argc, char *argv[])
 			{
 				player.pos.y -= deltaPos.y;
 			}
+			Mix_PlayChannel(0, walkSFX, 0);
 		}
 		if (keystate[SDL_SCANCODE_D] ||
 				keystate[SDL_SCANCODE_RIGHT])
@@ -230,6 +243,7 @@ int main(int argc, char *argv[])
 			{
 				player.pos.y += deltaPos.y;
 			}
+			Mix_PlayChannel(0, walkSFX, 0);
 		}
 		if (keystate[SDL_SCANCODE_A] ||
 				keystate[SDL_SCANCODE_LEFT])
@@ -254,6 +268,7 @@ int main(int argc, char *argv[])
 			{
 				player.pos.y -= deltaPos.y;
 			}
+			Mix_PlayChannel(0, walkSFX, 0);
 		}
 		SDL_RenderClear(state.renderer);
 		renderFloor(&state, &player, 64, 64, &flrTexture);
