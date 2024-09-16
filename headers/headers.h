@@ -114,6 +114,7 @@ void renderWall(State *state, Player *player, int texWidth,
 		int texHeight, SDL_Texture **wallTexture);
 void renderRain(State *state);
 void renderWeapon(State *state, bool isKilling);
+void renderMiniMap(State *state, Player *player, int miniMapSize);
 void getMap(const char *fp);
 int xy2index(int x, int y, int w);
 
