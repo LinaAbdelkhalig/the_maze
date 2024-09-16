@@ -131,8 +131,21 @@ int main(int argc, char *argv[])
 					state.running = false;
 					break;
 				case SDL_KEYDOWN:
+					if (event.key.keysym.sym == SDLK_ESCAPE)
+						state.running = false;
 					if (event.key.keysym.sym == SDLK_SPACE)
 						isKilling = true;
+					if (event.key.keysym.sym == SDLK_r)
+					{
+						state.raining = !state.raining;
+
+						/* play the rainSFX while it's raining */
+						if(state.raining)
+							Mix_PlayChannel(-1, rainSFX, -1);
+						else
+							/* stop the rsin sfx */
+							Mix_HaltChannel(-1);
+					}
 					break;
 				case SDL_KEYUP:
 					if (event.key.keysym.sym == SDLK_SPACE)
@@ -147,8 +160,6 @@ int main(int argc, char *argv[])
 		}
 
 		const uint8_t *keystate = SDL_GetKeyboardState(NULL);
-		if (keystate[SDL_SCANCODE_ESCAPE])
-			state.running = false;
 		if (mouse_xrel != 0)
 		{
 			float rotSpeed = rotateSpeed * (mouse_xrel * -0.1);
@@ -166,22 +177,6 @@ int main(int argc, char *argv[])
 			.x = player.dir.x * moveSpeed,
 			.y = player.dir.y * moveSpeed,
 		};
-		/* r to stop/start rain */
-		if (keystate[SDL_SCANCODE_R])
-		{
-			state.raining = !state.raining;
-
-			/* play the rainSFX while it's raining */
-			if(state.raining)
-			{
-				Mix_PlayChannel(-1, rainSFX, -1);
-			}
-			else
-			{
-				/* stop the rsin sfx */
-				Mix_HaltChannel(-1);
-			}
-		}
 		if (keystate[SDL_SCANCODE_W] || keystate[SDL_SCANCODE_UP])
 		{ 
 			if (MAP[xy2index(player.pos.x + deltaPos.x,
