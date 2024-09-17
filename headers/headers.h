@@ -1,6 +1,16 @@
 #ifndef HEADERS_H
 #define HEADERS_H
 
+/* Standard Libraries */
+#include <stdint.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+#include <string.h>
+#include <stdlib.h>
+#include <errno.h>
+
+/* SDL2 Libraries */
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_hints.h>
@@ -10,13 +20,6 @@
 #include <SDL2/SDL_scancode.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <math.h>
-#include <string.h>
-#include <stdlib.h>
-#include <errno.h>
 
 /* global variables */
 #define SCREEN_WIDTH 640
@@ -57,6 +60,7 @@ typedef struct IntVector
  * @renderer: The SDL renderer.
  * @running: Flag indicating if the game is running.
  * @raining: Flag indicating if it is raining.
+ * @miniMap: Flag indicating if the mini-map is displayed.
  */
 typedef struct State
 {
@@ -87,8 +91,8 @@ typedef struct Player
  * @NorthSouth: Whether the wall is facing north or south.
  * @EastWest: Whether the wall is facing east or west.
  *
- * This enum is used to determin the direction the wall is facing
- * to ddetermin whether it will be shaded or not.
+ * This enum is used to determine the direction the wall is facing
+ * to determine whether it will be shaded or not.
  */
 typedef enum Side
 {
@@ -96,7 +100,7 @@ typedef enum Side
 	EastWest
 } Side;
 
-/* Functions */
+/* Macros */
 #define ASSERT(cond, ...) \
 	do { \
 		if (!(cond)) \
