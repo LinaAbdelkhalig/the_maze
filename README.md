@@ -54,10 +54,10 @@ $ ./maze maps/map.txt
 - [x] Weapons
 - [x] Rain effects
 - [x] Sound effects
-- [] Storyline
-- [] Shadows
-- [] Enemies
-- [] Additional weapons
+- [ ] Storyline
+- [ ] Shadows
+- [ ] Enemies
+- [ ] Additional weapons
 
 ## Contributing
 We welcome contribution to enhance the project. If you'd like to contribute, please follow these steps
