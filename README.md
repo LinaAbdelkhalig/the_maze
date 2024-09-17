@@ -2,6 +2,7 @@
 
 ## Introduction
 The Maze is a 3D game developed using raycasting techniques. The project was implemented in C using the SDL2 library for rendering and input handling. The aim is to provide the player's perspective within a maze environment.
+
 **Links:**
 - [Repository](https://github.com/LinaAbdelkhalig/the_maze.git) | [Deployed Site](https://linaabdelkhalig.github.io/the_maze/) | [Blog Article](#)
 - **Authors**:
@@ -29,14 +30,14 @@ $ make
 $ ./maze maps/map.txt
 ```
 2. **Game Controls**:
-  - Rotate Left: <kbd>LEFT<kbd> or <kbd>a<kbd>
-  - Rotate Right: <kbd>RIGHT<kbd> or <kbd>d<kbd>
-  - Move Forward: <kbd>UP<kbd> or <kbd>w<kbd>
-  - Move Backward: <kbd>DOWN<kbd> or <kbd>s<kbd>
-  - Show/Hide Map: <kbd>m<kbd>
-  - Make it Rain: <kbd>r<kbd>
-  - Use Weapon: <kbd>SPACE<kbd>
-  - Exit Game: <kbd>ESCAPE<kbd>
+  - Rotate Left: <kbd>LEFT</kbd> or <kbd>a</kbd>
+  - Rotate Right: <kbd>RIGHT</kbd> or <kbd>d</kbd>
+  - Move Forward: <kbd>UP</kbd> or <kbd>w</kbd>
+  - Move Backward: <kbd>DOWN</kbd> or <kbd>s</kbd>
+  - Show/Hide Map: <kbd>m</kbd>
+  - Make it Rain: <kbd>r</kbd>
+  - Use Weapon: <kbd>SPACE</kbd>
+  - Exit Game: <kbd>ESCAPE</kbd>
 
 ## Dependencies
 - GCC compiler
