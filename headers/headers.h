@@ -107,7 +107,8 @@ typedef enum Side
 
 /* Function declarations */
 void loadTextures(State *state, SDL_Texture **texture, const char *path);
-void renderCeiling(State *state, Player *player, int texWidth, int texHeight, SDL_Texture **clngTexture);
+void renderCeiling(State *state, Player *player,
+		   int texWidth, int texHeight, SDL_Texture **clngTexture);
 void renderFloor(State *state, Player *player, int texWidth,
 		int texHeight, SDL_Texture **flrTexture);
 void renderWall(State *state, Player *player, int texWidth,
