@@ -64,6 +64,7 @@ typedef struct State
 	SDL_Renderer *renderer;
 	bool running;
 	bool raining;
+	bool miniMap;
 } State;
 
 /**
