@@ -124,6 +124,7 @@ int main(int argc, char *argv[])
 	State state = {
 		.running = true,
 		.raining = 0,
+		.miniMap = 0,
 	};
 
 	/* create the window */
@@ -179,7 +180,8 @@ int main(int argc, char *argv[])
 						isKilling = true;
 						Mix_PlayChannel(-1, gunSFX, 0);
 					}
-						
+					if (event.key.keysym.sym == SDLK_m)
+						state.miniMap = !state.miniMap;
 					if (event.key.keysym.sym == SDLK_r)
 					{
 						state.raining = !state.raining;
@@ -309,7 +311,8 @@ int main(int argc, char *argv[])
 		renderCeiling(&state, &player, 64, 64, &textureArray[2]);  // Ceiling texture
 		renderWall(&state, &player, 32, 32, &textureArray[1]);  // Wall texture
 
-		renderMiniMap(&state, &player, 150);
+		if (state.miniMap)
+			renderMiniMap(&state, &player, 150);
 		if (state.raining)
 		{
 			renderRain(&state);
