@@ -40,28 +40,30 @@ void closeFile(FILE *file, char *line)
  */
 int getMapSize(FILE *file)
 {
-	int w = 0, h = 0;
+	int width = 0, height = 0;
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t read;
 
 	/* Get the width and height of the file */
+	/* Read the first line to determine the width */
 	read = getline(&line, &len, file);
 	ASSERT((read != -1), "Map file is empty.\n");
-	w = (int)strlen(line) - 1;
-	fseek(file, 0, SEEK_SET);
+	width = (int)strlen(line) - 1; /* Exclude the new line character. */
+	fseek(file, 0, SEEK_SET); /* Start reading from the beginning. */
+	/* Count the number of lines to determine the height */
 	while ((read = getline(&line, &len, file)) != -1)
-		++h;
+		++height;
 	free(line); /* Free the allocated memory */
-	fseek(file, 0, SEEK_SET);
+	fseek(file, 0, SEEK_SET); /* Start from the beginning to read data */
 
 	/* Check if there is a square map or not */
-	if (w == 0 || h == 0 || w != h)
+	if (width == 0 || height == 0 || width != height)
 	{
 		fclose(file);
 		ASSERT(false, "Map file is not square or is empty.\n");
 	}
-	return (h);
+	return (height);
 }
 
 /**
