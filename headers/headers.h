@@ -113,9 +113,18 @@ typedef enum Side
 /* Function declarations */
 void loadTextures(State *state, SDL_Texture **texture, const char *path);
 void renderCeiling(State *state, Player *player,
-		   int texWidth, int texHeight, SDL_Texture **clngTexture);
+		int texWidth, int texHeight, SDL_Texture **clngTexture);
 void renderFloor(State *state, Player *player, int texWidth,
 		int texHeight, SDL_Texture **flrTexture);
+floatVector calculate_raydir(Player *player, float cameraX);
+void step_sidedist(Player *player, floatVector rayDir,
+		IntVector *mapBox, floatVector *deltaDist,
+		IntVector *stepDir, floatVector *sideDist);
+bool perform_dda(IntVector *mapBox, IntVector *stepDir,
+		floatVector *sideDist, floatVector *deltaDist,
+		Side *side);
+float calculate_wallx(Player *player, floatVector rayDir,
+		float perpWallDist, Side side);
 void renderWall(State *state, Player *player, int texWidth,
 		int texHeight, SDL_Texture **wallTexture);
 void renderRain(State *state);
