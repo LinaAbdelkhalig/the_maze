@@ -109,117 +109,55 @@ void renderFloor(State *state, Player *player, int texWidth,
 	}
 }
 
+
 /**
- * renderWall - render the wall texture.
- *
- * @state: The struct holding the window and renderer
- * @player: The struct holding the players position information
- * @texWidth: Width of the texture
- * @texHeight: The height of the textures
- * @wallTexture: The var holding the texture for the ceiling
+ * renderWall - render the walls using raycasting
+ * @state: pointer to the game state (State struct)
+ * @player: pointer to the Player struct
+ * @texWidth: texture width
+ * @texHeight: texture height
+ * @wallTexture: pointer to SDL_Texture for the wall
+ * Return: Void
  */
-void renderWall(State *state, Player *player, int texWidth,
-		int texHeight, SDL_Texture **wallTexture)
+void renderWall(State *state, Player *player, int texWidth, int texHeight,
+		SDL_Texture **wallTexture)
 {
 	for (int x = 0; x < SCREEN_WIDTH; ++x)
 	{
 		float cameraX = 2 * x / (float)SCREEN_WIDTH - 1;
-		floatVector rayDir = {
-			.x = player->dir.x + player->plane.x * cameraX,
-			.y = player->dir.y + player->plane.y * cameraX,
-		};
-		IntVector mapBox = {
-			.x = (int)player->pos.x,
-			.y = (int)player->pos.y};
-		floatVector sideDist = {0.0, 0.0};
-		floatVector deltaDist = {
-			.x = (rayDir.x == 0) ? 1e30 : fabsf(1 / rayDir.x),
-			.y = (rayDir.y == 0) ? 1e30 : fabsf(1 / rayDir.y),
-		};
-		float perpWallDist;
-		IntVector stepDir = {0, 0};
-		bool hit = false;
+		floatVector rayDir = calculate_raydir(player, cameraX);
+		IntVector mapBox = { (int)player->pos.x, (int)player->pos.y };
+		floatVector deltaDist = { fabsf(1 / rayDir.x), fabsf(1 / rayDir.y) };
+		floatVector sideDist = { 0, 0 };
+		IntVector stepDir = { 0, 0 };
 		Side side;
 
-		if (rayDir.x < 0)
-		{
-			stepDir.x = -1;
-			sideDist.x = (player->pos.x - mapBox.x) * deltaDist.x;
-		}
-		else
-		{
-			stepDir.x = 1;
-			sideDist.x = (mapBox.x + 1.0f - player->pos.x) * deltaDist.x;
-		}
-		if (rayDir.y < 0)
-		{
-			stepDir.y = -1;
-			sideDist.y = (player->pos.y - mapBox.y) * deltaDist.y;
-		}
-		else
-		{
-			stepDir.y = 1;
-			sideDist.y = (mapBox.y + 1.0f - player->pos.y) * deltaDist.y;
-		}
-		while (!hit)
-		{
-			if (sideDist.x < sideDist.y)
-			{
-				sideDist.x += deltaDist.x;
-				mapBox.x += stepDir.x;
-				side = EastWest;
-			}
-			else
-			{
-				sideDist.y += deltaDist.y;
-				mapBox.y += stepDir.y;
-				side = NorthSouth;
-			}
-			if (MAP[xy2index(mapBox.x, mapBox.y, MAP_SIZE)] > 0)
-			{
-				hit = true;
-			}
-		}
-		if (side == EastWest)
-		{
-			perpWallDist = (sideDist.x - deltaDist.x);
-		}
-		else
-		{
-			perpWallDist = (sideDist.y - deltaDist.y);
-		}
+		step_sidedist(player, rayDir, &mapBox, &deltaDist, &stepDir,
+				&sideDist);
+		while (!perform_dda(&mapBox, &stepDir, &sideDist,
+					&deltaDist, &side))
+		{}
+		float perpWallDist = (side == EastWest) ?
+			(sideDist.x - deltaDist.x) :
+			(sideDist.y - deltaDist.y);
+		float wallX = calculate_wallx(player, rayDir, perpWallDist,
+				side) - floorf(calculate_wallx(player, rayDir,
+						perpWallDist, side));
+		int texX = (int)(wallX * (float)texWidth);
+
+		if ((side == EastWest && rayDir.x > 0) || (side == NorthSouth
+					&& rayDir.y < 0))
+			texX = texWidth - texX - 1;
 		int lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
 		int drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2;
-		if (drawStart < 0)
-			drawStart = 0;
-		int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
-		if (drawEnd >= SCREEN_HEIGHT)
-			drawEnd = SCREEN_HEIGHT;
-		float wallX;
-		if (side == EastWest)
-		{
-			wallX = player->pos.y + perpWallDist * rayDir.y;
-		}
-		else
-		{
-			wallX = player->pos.x + perpWallDist * rayDir.x;
-		}
-		wallX -= floorf(wallX);
-		int texX = (int)(wallX * (float)texWidth);
-		if (side == EastWest && rayDir.x > 0)
-			texX = texWidth - texX - 1;
-		if (side == NorthSouth && rayDir.y < 0)
-			texX = texWidth - texX - 1;
-		Uint8 r = 255, g = 255, b = 255;
-		if (side == NorthSouth)
-		{
-			r = 160;
-			g = 160;
-			b = 160;
-		}
+
+		Uint8 r = (side == NorthSouth) ? 160 : 255, g = r, b = r;
+
 		SDL_SetTextureColorMod(*wallTexture, r, g, b);
-		SDL_Rect srcRect = {texX, 0, 1, texHeight};
-		SDL_Rect destRect = {x, drawStart, 1, lineHeight};
-		SDL_RenderCopy(state->renderer, *wallTexture, &srcRect, &destRect);
+		SDL_Rect srcRect = { texX, 0, 1, texHeight };
+		SDL_Rect destRect = { x, drawStart, 1, lineHeight };
+
+		SDL_RenderCopy(state->renderer, *wallTexture, &srcRect,
+				&destRect);
 	}
 }
