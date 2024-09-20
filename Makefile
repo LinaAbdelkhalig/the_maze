@@ -8,19 +8,24 @@ CFLAGS = -Wall -Werror -Wextra -pedantic
 SDLFLAGS = `sdl2-config --cflags --libs` -lSDL2_image -lSDL2_mixer
 
 #files to compile
-SRC = src/main.c src/load_textures.c src/rain.c src/get_map.c src/render.c src/weapons.c src/drawMiniMap.c
+SRC = $(wildcard src/*.c)
 
 #math flags
 MATHFLAGS = -lm
 
-OBJ = $(SRC:.c=.o)
+OBJ = $(patsubst %.c, %.o, $(SRC))
 
 TARGET = maze
 
 all: $(TARGET)
 
+# linking
 $(TARGET): $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $^ $(SDLFLAGS) $(MATHFLAGS)
+
+# compilation step for each .c file to .o
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJ) $(TARGET)
