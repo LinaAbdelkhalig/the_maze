@@ -111,6 +111,15 @@ typedef enum Side
 	} while (0)
 
 /* Function declarations */
+/* TODO put the func declarations in order */
+
+void mouse_rotation(int *mouse_xrel, float rotateSpeed, Player *player);
+void key_rotation_right(const uint8_t *keystate, Player *player,
+                floatVector *deltaPos, Mix_Chunk *walkSFX,
+		float rotateSpeed, float moveSpeed);
+void key_rotation_left(const uint8_t *keystate, Player *player,
+                floatVector *deltaPos, Mix_Chunk *walkSFX,
+		float rotateSpeed, float moveSpeed);
 void loadTextures(State *state, SDL_Texture **texture, const char *path);
 void renderCeiling(State *state, Player *player,
 		int texWidth, int texHeight, SDL_Texture **clngTexture);

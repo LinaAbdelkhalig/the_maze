@@ -17,6 +17,7 @@ SDL_Texture *weaponShotTexture = NULL;
  * init_textures - initializes and loads the textures from PNGs
  * @textureArray: array that holds the textures to be loaded
  * @state: struct holding renderer and window
+ *
  * Return: void
  */
 void init_textures(SDL_Texture *textureArray[], State *state)
@@ -96,9 +97,9 @@ void init(State *state)
 			SDL_GetError());
 }
 
-/** handle_events - handles events and user input
+/**
+ * handle_events - handles events and user input
  * @state: pointer to the state struct
- * @player: pointer to the player struct
  * @isKilling: determines whether the weapon is shooting
  *
  * Return: void
@@ -129,8 +130,8 @@ int handle_events(State *state, bool *isKilling)
 				{
 					state->raining = !state->raining;
 					if (state->raining)
-						Mix_PlayChannel(1, rainSFX,
-							       	-1);
+						Mix_PlayChannel(1, rainSFX, 
+								-1);
 					else
 						Mix_HaltChannel(-1);
 				}
@@ -148,16 +149,18 @@ int handle_events(State *state, bool *isKilling)
 	}
 	return (mouse_xrel);
 }
+
 /**
  * update_playerpos - updates the position of the player
+ * @deltaPos: pointer to vector of change in player position
  * @player: pointer to the Player struct
  * @keystate: pointer to the var holding the key state
  * @moveSpeed: the movement speed
- * @rotateSpeed: the rotation speed
  *
  * Return: void
  */
-void update_playerpos(floatVector *deltaPos, Player *player, const uint8_t *keystate, float moveSpeed)
+void update_playerpos(floatVector *deltaPos, Player *player,
+		const uint8_t *keystate, float moveSpeed)
 {
 	deltaPos->x = player->dir.x * moveSpeed;
 	deltaPos->y = player->dir.y * moveSpeed;
@@ -190,7 +193,7 @@ void update_playerpos(floatVector *deltaPos, Player *player, const uint8_t *keys
  * render_scene - redners the walls, ceiling and floor
  * @state: pointer to the state struct
  * @player: pointer to the player struct
- * 
+ *
  * Return: void
  */
 void render_scene(State *state, Player *player)
@@ -234,118 +237,50 @@ void clean_up(State *state, SDL_Texture *textureArray[])
 }
 
 
+/**
+ * main - main function of the program
+ * @argc: number of arguments passed
+ * @argv: vector of arguments passed
+ *
+ * Return: 0
+ */
 int main(int argc, char *argv[])
 {
 	ASSERT((argc == 2), "Usage: %s <map_file_path>\n", argv[0]);
 	/* load the map from the file */
 	getMap(argv[1]);
-
-	/* assign the initial values of state */
 	State state = {
 		.running = true,
 		.raining = 0,
 		.miniMap = 0,
 	};
-	/* initialize sdl, sld_img, and sdl_mixer, and create the window*/
 	init(&state);
-
-	/* loading the sfx */
 	load_sfx();
-
-	/* set the textures to null and load them in the array*/
 	init_textures(textureArray, &state);
 	loadTextures(&state, &weaponShotTexture, "textures/gun_shot.png");
 	loadTextures(&state, &weaponTexture, "textures/gun.png");
-
 	SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1");
 	SDL_SetRelativeMouseMode(true);
-	Player player = {
-		.pos = {.x = 4.0f, .y = 4.0f},
-		.dir = {.x = -1.0f, .y = 0.0f},
-		.plane = {.x = 0.0f, .y = 0.66f},
-	};
+	Player player = {{4.0f, 4.0f}, {-1.0f, 0.0f}, {0.0f, 0.66f}};
 	const float rotateSpeed = 0.2, moveSpeed = 0.30;
 	bool isKilling = false;
 
-	/* the main loop */
 	while (state.running)
 	{
 		const uint8_t *keystate = SDL_GetKeyboardState(NULL);
 		int mouse_xrel = handle_events(&state, &isKilling);
-		
-		if (mouse_xrel != 0)
-		{
-			float rotSpeed = rotateSpeed * (mouse_xrel * -0.1);
-			// both camera direction and camera plane must be rotated
-			floatVector oldDir = player.dir;
-
-			player.dir.x = player.dir.x * cosf(rotSpeed) - player.dir.y * sinf(rotSpeed);
-			player.dir.y = oldDir.x * sinf(rotSpeed) + player.dir.y * cosf(rotSpeed);
-			floatVector oldPlane = player.plane;
-			player.plane.x = player.plane.x * cosf(rotSpeed) - player.plane.y * sinf(rotSpeed);
-			player.plane.y = oldPlane.x * sinf(rotSpeed) + player.plane.y * cosf(rotSpeed);
-		}
-
 		floatVector deltaPos;
-		update_playerpos(&deltaPos, &player, keystate, moveSpeed);
-		
-		if (keystate[SDL_SCANCODE_D] ||
-				keystate[SDL_SCANCODE_RIGHT])
-		{ // turn right
-			floatVector oldDir = player.dir;
-			player.dir.x = oldDir.x * cosf(-rotateSpeed) - oldDir.y * sinf(-rotateSpeed);
-			player.dir.y = oldDir.x * sinf(-rotateSpeed) + oldDir.y * cosf(-rotateSpeed);
-			floatVector oldPlane = player.plane;
-			player.plane.x = oldPlane.x * cosf(-rotateSpeed) - oldPlane.y * sinf(-rotateSpeed);
-			player.plane.y = oldPlane.x * sinf(-rotateSpeed) + oldPlane.y * cosf(-rotateSpeed);
-			deltaPos.x = player.plane.x * moveSpeed;
-			deltaPos.y = player.plane.y * moveSpeed;
-			if (MAP[xy2index(player.pos.x + deltaPos.x,
-						player.pos.y,
-						MAP_SIZE)] == 0)
-			{
-				player.pos.x += deltaPos.x;
-			}
-			if (MAP[xy2index(player.pos.x,
-						player.pos.y + deltaPos.y,
-						MAP_SIZE)] == 0)
-			{
-				player.pos.y += deltaPos.y;
-			}
-			Mix_PlayChannel(0, walkSFX, 0);
-		}
-		if (keystate[SDL_SCANCODE_A] ||
-				keystate[SDL_SCANCODE_LEFT])
-		{ // turn left
-			floatVector oldDir = player.dir;
-			player.dir.x = oldDir.x * cosf(rotateSpeed) - oldDir.y * sinf(rotateSpeed);
-			player.dir.y = oldDir.x * sinf(rotateSpeed) + oldDir.y * cosf(rotateSpeed);
-			floatVector oldPlane = player.plane;
-			player.plane.x = oldPlane.x * cosf(rotateSpeed) - oldPlane.y * sinf(rotateSpeed);
-			player.plane.y = oldPlane.x * sinf(rotateSpeed) + oldPlane.y * cosf(rotateSpeed);
-			deltaPos.x = player.plane.x * moveSpeed;
-			deltaPos.y = player.plane.y * moveSpeed;
-			if (MAP[xy2index(player.pos.x - deltaPos.x,
-						player.pos.y,
-						MAP_SIZE)] == 0)
-			{
-				player.pos.x -= deltaPos.x;
-			}
-			if (MAP[xy2index(player.pos.x,
-						player.pos.y - deltaPos.y,
-						MAP_SIZE)] == 0)
-			{
-				player.pos.y -= deltaPos.y;
-			}
-			Mix_PlayChannel(0, walkSFX, 0);
-		}
 
+		mouse_rotation(&mouse_xrel, rotateSpeed, &player);
+		update_playerpos(&deltaPos, &player, keystate, moveSpeed);
+		key_rotation_right(keystate, &player, &deltaPos, walkSFX,
+				rotateSpeed, moveSpeed);
+		key_rotation_left(keystate, &player, &deltaPos, walkSFX,
+				rotateSpeed, moveSpeed);
 		render_scene(&state, &player);
 		renderWeapon(&state, isKilling);
 		SDL_RenderPresent(state.renderer);
 	}
-	
 	clean_up(&state, textureArray);
-
 	return (0);
 }
