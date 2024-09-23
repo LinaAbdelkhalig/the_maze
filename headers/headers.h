@@ -32,7 +32,7 @@ extern SDL_Texture *weaponShotTexture;
 extern Mix_Chunk *walkSFX;
 extern Mix_Chunk *rainSFX;
 extern Mix_Chunk *gunSFX;
-extern SDL_Texture *textureArray[3];
+extern SDL_Texture *textureArray[5];
 
 /* Structs */
 /**
