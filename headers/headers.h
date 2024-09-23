@@ -29,6 +29,10 @@ extern uint8_t *MAP;
 extern int MAP_SIZE;
 extern SDL_Texture *weaponTexture;
 extern SDL_Texture *weaponShotTexture;
+extern Mix_Chunk *walkSFX;
+extern Mix_Chunk *rainSFX;
+extern Mix_Chunk *gunSFX;
+extern SDL_Texture *textureArray[3];
 
 /* Structs */
 /**
@@ -111,8 +115,18 @@ typedef enum Side
 	} while (0)
 
 /* Function declarations */
-/* TODO put the func declarations in order */
+/* Initialization functions */
+void init(State *state);
+void clean_up(State *state, SDL_Texture *textureArray[]);
+void init_textures(SDL_Texture *textureArray[], State *state);
+void load_sfx(void);
+void init_textures(SDL_Texture *textureArray[], State *state);
+void loadTextures(State *state, SDL_Texture **texture, const char *path);
 
+/* Input handling functions */
+int handle_events(State *state, bool *isKilling);
+void update_playerpos(floatVector *deltaPos, Player *player,
+		const uint8_t *keystate, float moveSpeed);
 void mouse_rotation(int *mouse_xrel, float rotateSpeed, Player *player);
 void key_rotation_right(const uint8_t *keystate, Player *player,
 		floatVector *deltaPos, Mix_Chunk *walkSFX,
@@ -120,11 +134,24 @@ void key_rotation_right(const uint8_t *keystate, Player *player,
 void key_rotation_left(const uint8_t *keystate, Player *player,
 		floatVector *deltaPos, Mix_Chunk *walkSFX,
 		float rotateSpeed, float moveSpeed);
-void loadTextures(State *state, SDL_Texture **texture, const char *path);
-void renderCeiling(State *state, Player *player,
-		int texWidth, int texHeight, SDL_Texture **clngTexture);
+
+/* Map functions */
+void getMap(const char *fp);
+int xy2index(int x, int y, int w);
+
+/* Rendering functions */
+void render_scene(State *state, Player *player);
 void renderFloor(State *state, Player *player, int texWidth,
 		int texHeight, SDL_Texture **flrTexture);
+void renderCeiling(State *state, Player *player,
+		int texWidth, int texHeight, SDL_Texture **clngTexture);
+void renderWall(State *state, Player *player, int texWidth,
+		int texHeight, SDL_Texture **wallTexture);
+void renderRain(State *state);
+void renderWeapon(State *state, bool isKilling);
+void renderMiniMap(State *state, Player *player, int miniMapSize);
+
+/* Calculation functions */
 floatVector calculate_raydir(Player *player, float cameraX);
 void step_sidedist(Player *player, floatVector rayDir,
 		IntVector *mapBox, floatVector *deltaDist,
@@ -134,12 +161,5 @@ bool perform_dda(IntVector *mapBox, IntVector *stepDir,
 		Side *side);
 float calculate_wallx(Player *player, floatVector rayDir,
 		float perpWallDist, Side side);
-void renderWall(State *state, Player *player, int texWidth,
-		int texHeight, SDL_Texture **wallTexture);
-void renderRain(State *state);
-void renderWeapon(State *state, bool isKilling);
-void renderMiniMap(State *state, Player *player, int miniMapSize);
-void getMap(const char *fp);
-int xy2index(int x, int y, int w);
 
 #endif /* HEADERS_H */
