@@ -18,9 +18,9 @@ void renderWeapon(State *state, bool isKilling)
 		.h = weaponH
 	};
 	if (isKilling)
-		SDL_RenderCopyEx(state->renderer, weaponShotTexture,
+		SDL_RenderCopyEx(state->renderer, textureArray[4],
 				NULL, &weaponRect, 0.0f, NULL, SDL_FLIP_NONE);
 	else
-		SDL_RenderCopyEx(state->renderer, weaponTexture,
+		SDL_RenderCopyEx(state->renderer, textureArray[3],
 				NULL, &weaponRect, 0.0f, NULL, SDL_FLIP_NONE);
 }
