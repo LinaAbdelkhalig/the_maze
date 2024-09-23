@@ -1,6 +1,25 @@
 #include "../headers/headers.h"
 
 /**
+ * render_scene - redners the walls, ceiling and floor
+ * @state: pointer to the state struct
+ * @player: pointer to the player struct
+ *
+ * Return: void
+ */
+void render_scene(State *state, Player *player)
+{
+	SDL_RenderClear(state->renderer);
+	renderFloor(state, player, 64, 64, &textureArray[0]);
+	renderCeiling(state, player, 64, 64, &textureArray[2]);
+	renderWall(state, player, 32, 32, &textureArray[1]);
+	if (state->miniMap)
+		renderMiniMap(state, player, 150);
+	if (state->raining)
+		renderRain(state);
+}
+
+/**
  * renderCeiling - renders the ceiling texture
  *
  * @state: The struct holding the window and renderer
