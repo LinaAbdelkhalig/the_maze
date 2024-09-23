@@ -19,7 +19,13 @@ $ git clone https://github.com/LinaAbdelkhalig/the_maze.git
 ```sh
 $ cd the_maze
 ```
-3. **Build the project**:
+3. **Install the SDL2 libraries**:
+```sh
+sudo apt-get install libsdl2-dev
+sudo apt-get install libsdl2-image-dev
+sudo apt-get install libsdl2-mixer-dev
+```
+4. **Build the project**:
 ```sh
 $ make
 ```
