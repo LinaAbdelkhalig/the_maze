@@ -36,8 +36,6 @@ int main(int argc, char *argv[])
 	init(&state);
 	load_sfx();
 	init_textures(textureArray, &state);
-	loadTextures(&state, &weaponShotTexture, "textures/gun_shot.png");
-	loadTextures(&state, &weaponTexture, "textures/gun.png");
 	SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1");
 	SDL_SetRelativeMouseMode(true);
 	Player player = {{4.0f, 4.0f}, {-1.0f, 0.0f}, {0.0f, 0.66f}};
