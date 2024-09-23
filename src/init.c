@@ -4,9 +4,7 @@
 Mix_Chunk *walkSFX = NULL;
 Mix_Chunk *rainSFX = NULL;
 Mix_Chunk *gunSFX = NULL;
-SDL_Texture *textureArray[3];
-SDL_Texture *weaponTexture = NULL;
-SDL_Texture *weaponShotTexture = NULL;
+SDL_Texture *textureArray[5];
 
 /**
  * init - initializes SDL, IMG, and SDL_Mixer
@@ -52,14 +50,15 @@ void init(State *state)
  */
 void init_textures(SDL_Texture *textureArray[], State *state)
 {
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		textureArray[i] = NULL;
 	}
 	loadTextures(state, &textureArray[0], "textures/floor_desert.png");
 	loadTextures(state, &textureArray[1], "textures/wall_bricks_old_32.png");
 	loadTextures(state, &textureArray[2], "textures/sky.png");
-	/* TODO: add textures for the gun and gunshots */
+	loadTextures(state, &textureArray[3], "textures/gun.png");
+	loadTextures(state, &textureArray[4], "textures/gun_shot.png");
 }
 
 /**
@@ -92,12 +91,10 @@ void clean_up(State *state, SDL_Texture *textureArray[])
 	Mix_FreeChunk(rainSFX);
 	Mix_FreeChunk(gunSFX);
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		SDL_DestroyTexture(textureArray[i]);
 	}
-	SDL_DestroyTexture(weaponTexture);
-	SDL_DestroyTexture(weaponShotTexture);
 	SDL_DestroyRenderer(state->renderer);
 	SDL_DestroyWindow(state->window);
 	Mix_CloseAudio();
