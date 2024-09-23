@@ -1,8 +1,5 @@
 #include "../headers/headers.h"
 
-uint8_t *MAP = NULL;
-int MAP_SIZE = 0;
-
 /**
  * openFile - Opens the map file.
  *
